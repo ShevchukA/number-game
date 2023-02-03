@@ -1,0 +1,75 @@
+/*
+COLORS:
+
+Light green: #7ed56f
+Medium green: #55c57a
+Dark green: #28b485
+
+*/
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  text-align: center;
+  height: 100vh;
+  background-image: linear-gradient(to top, rgb(126, 213, 111), rgb(40, 180, 131));
+  background-size: cover;
+  background-repeat: no-repeat;
+  font-family: 'Lato', sans-serif;
+}
+
+.ui {
+  height: 10vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.main {
+  height: 90vh;
+  position: relative;
+}
+
+.score {
+  font-size: 1.5rem;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.grid {
+  height: 35rem;
+  width: 25rem;
+  position: relative;
+  top: 5vh;
+  left: 50%;
+  transform: translateX(-50%);
+  backface-visibility: hidden;
+  border: 2px solid #fff;
+
+  /* overflow: hidden; */
+}
+
+.ball {
+  height: 3.5rem;
+  width: 3.5rem;
+  user-select: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  border-radius: 10rem;
+  background-color: #fff;
+  font-weight: 800;
+  color: #55c57a;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  position: absolute;
+}
+
+.ball:hover {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+}
