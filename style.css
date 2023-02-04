@@ -28,6 +28,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  border-bottom: 2px solid #fff;
 }
 
 .main {
@@ -42,10 +43,8 @@ body {
 }
 
 .grid {
-  height: 35rem;
-  width: 25rem;
   position: relative;
-  top: 5vh;
+  top: 50px;
   left: 50%;
   transform: translateX(-50%);
   backface-visibility: hidden;
@@ -55,8 +54,6 @@ body {
 }
 
 .ball {
-  height: 3.5rem;
-  width: 3.5rem;
   user-select: none;
   display: flex;
   justify-content: center;
