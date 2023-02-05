@@ -1,8 +1,8 @@
 const balls = document.querySelectorAll(".ball");
 const scoreField = document.querySelector(".score");
 const board = document.querySelector(".board");
-const grid = [[], [], [], [], []];
 
+const grid = [[], [], [], [], []];
 const ballSize = 50;
 const cell = 50;
 const gap = 20;
@@ -22,6 +22,8 @@ function Ball() {
   //absolute screen coordinates
   this.x = 0;
   this.y = 0;
+  this.col = 0;
+  this.row = 0;
 
   this.points = getRundomPoints(pointsLimit);
   this.html = createHtmlElement(this.points);
@@ -29,6 +31,16 @@ function Ball() {
   this.updatePoints = function (newPoints) {
     this.points = newPoints;
     this.html.innerText = newPoints;
+  };
+
+  // set position in the board grid
+  this.setPos = function (col, row) {
+    this.col = col;
+    this.row = row;
+    // set coordinates relative to the board
+    let x = gap + col * cell + col * gap;
+    let y = gap + (6 - row) * cell + (6 - row) * gap;
+    this.setXY(x, y);
   };
   // set coordinates relative to the board
   this.setXY = function (x, y) {
@@ -57,22 +69,53 @@ function Ball() {
 }
 
 function addNewBalls() {
+  for (let i = 0; i < 5; i++) {
+    const ball = new Ball();
+    board.appendChild(ball.html);
+    ball.setPos(i, 0);
+    grid[i].unshift(ball);
+  }
+  /*
   let posX = 0;
-  let posY = boardH - ballSize - gap;
+  let posY = boardH - cell - gap;
   for (let i = 0; i < 5; i++) {
     const ball = new Ball();
     board.appendChild(ball.html);
     posX = gap + i * gap + i * cell;
     ball.setXY(posX, posY);
     grid[i].unshift(ball);
-    ball.html.addEventListener("pointerdown", (e) => {
-      grabBall(ball, e);
-    });
+    // ball.html.addEventListener("pointerdown", (e) => {
+    //   grabBall(ball, e);
+    // });
   }
+  */
   console.log(grid);
 }
 
 addNewBalls();
+
+board.onpointerdown = function (e) {
+  let pointerX = e.clientX;
+  let pointerY = e.clientY;
+  let col = Math.trunc((pointerX - boardX) / (gap + cell));
+  let row = Math.trunc(7 - (pointerY - boardY) / (gap + cell));
+  console.log(col, row);
+  /*
+  определить клетку row и col, поделив координаты на gap+cell
+  посмотреть в массив grid[row][col] на наличие шарика
+  при отпускании мышки определить col, 
+  затем определить номер row по длине массива
+  задать свойства шарику row и col через метод setPos и вызвать пересчет setXY
+  добавить шарик в массив
+  
+
+  */
+
+  for (let i = 0; i < 6; i++) {
+    // проверить шарик под мышкой
+    // ball.x < x < ball.x + ballsize
+  }
+};
 
 function grabBall(ball, e) {
   let shiftX = ball.x - e.clientX;
