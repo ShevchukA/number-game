@@ -56,8 +56,8 @@ function Ball() {
     const ball = document.createElement("div");
     ball.innerText = points;
     ball.classList.add("ball");
-    ball.style.width = ballSize + "px";
-    ball.style.height = ballSize + "px";
+    ball.style.width = `${ballSize}px`;
+    ball.style.height = `${ballSize}px`;
     return ball;
   }
 
@@ -81,22 +81,6 @@ function addNewBalls() {
 addNewBalls();
 
 board.onpointerdown = function (e) {
-  let pointerX = e.clientX;
-  let pointerY = e.clientY;
-  // define cell under the pointer
-  let col = Math.trunc((pointerX - boardX) / (gap + cell));
-  let row = Math.trunc(7 - (pointerY - boardY) / (gap + cell));
-  console.log(col, row);
-
-  let ball;
-  // check if cell is not empty
-  if (grid[col][row]) {
-    ball = grid[col][row];
-    // check if pointer down exactly on the ball than grab the ball
-    if (pointerX > ball.x && pointerY > ball.y) {
-      grabBall(ball, pointerX, pointerY);
-    }
-  }
   /*
   определить клетку row и col, поделив координаты на gap+cell
   посмотреть в массив grid[row][col] на наличие шарика
@@ -105,12 +89,29 @@ board.onpointerdown = function (e) {
   задать свойства шарику row и col через метод setPos и вызвать пересчет setXY
   добавить шарик в массив
   */
+  let pointerX = e.clientX;
+  let pointerY = e.clientY;
+  // define cell under the pointer
+  let col = Math.trunc((pointerX - boardX) / (gap + cell));
+  let row = Math.trunc(7 - (pointerY - boardY) / (gap + cell));
+  console.log(col, row);
+
+  // if last cell in column is not empty then can move ball
+  if (grid[col][row] && row === grid[col].length - 1) {
+    let ball = grid[col][row];
+    // check if pointer down exactly on the ball than grab the ball
+    if (pointerX > ball.x && pointerY > ball.y) {
+      grabBall(ball, pointerX, pointerY);
+    }
+  }
 };
 
 function grabBall(ball, pointerX, pointerY) {
+  // define shift between pointer and ball coordinates
   let shiftX = ball.x - pointerX;
   let shiftY = ball.y - pointerY;
   // console.log(shiftX, shiftY);
+  console.log(ball);
 
   board.addEventListener("pointermove", moveBall);
 
@@ -122,8 +123,29 @@ function grabBall(ball, pointerX, pointerY) {
     ball.setXY(posX, posY);
   }
 
-  ball.html.onpointerup = function () {
+  board.onpointerup = function (e) {
     board.removeEventListener("pointermove", moveBall);
+    let pointerX = e.clientX;
+    let pointerY = e.clientY;
+    // define cell under the pointer
+    let col = Math.trunc((pointerX - boardX) / (gap + cell));
+    let row = Math.trunc(7 - (pointerY - boardY) / (gap + cell));
+
+    if (row >= grid[col].length) {
+      // delete from current column
+      grid[ball.col].pop(ball);
+      // set new position of the ball
+      ball.setPos(col, grid[col].length);
+      // add to selected column
+      grid[col].push(ball);
+    } else {
+      // return to previous position
+      ball.setPos(ball.col, ball.row);
+      // add to previous column
+      grid[col].push(ball);
+    }
+
+    console.log(grid);
     this.onpointerup = null;
   };
 }
