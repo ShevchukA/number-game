@@ -75,20 +75,6 @@ function addNewBalls() {
     ball.setPos(i, 0);
     grid[i].unshift(ball);
   }
-  /*
-  let posX = 0;
-  let posY = boardH - cell - gap;
-  for (let i = 0; i < 5; i++) {
-    const ball = new Ball();
-    board.appendChild(ball.html);
-    posX = gap + i * gap + i * cell;
-    ball.setXY(posX, posY);
-    grid[i].unshift(ball);
-    // ball.html.addEventListener("pointerdown", (e) => {
-    //   grabBall(ball, e);
-    // });
-  }
-  */
   console.log(grid);
 }
 
@@ -97,9 +83,20 @@ addNewBalls();
 board.onpointerdown = function (e) {
   let pointerX = e.clientX;
   let pointerY = e.clientY;
+  // define cell under the pointer
   let col = Math.trunc((pointerX - boardX) / (gap + cell));
   let row = Math.trunc(7 - (pointerY - boardY) / (gap + cell));
   console.log(col, row);
+
+  let ball;
+  // check if cell is not empty
+  if (grid[col][row]) {
+    ball = grid[col][row];
+    // check if pointer down exactly on the ball than grab the ball
+    if (pointerX > ball.x && pointerY > ball.y) {
+      grabBall(ball, pointerX, pointerY);
+    }
+  }
   /*
   определить клетку row и col, поделив координаты на gap+cell
   посмотреть в массив grid[row][col] на наличие шарика
@@ -107,34 +104,26 @@ board.onpointerdown = function (e) {
   затем определить номер row по длине массива
   задать свойства шарику row и col через метод setPos и вызвать пересчет setXY
   добавить шарик в массив
-  
-
   */
-
-  for (let i = 0; i < 6; i++) {
-    // проверить шарик под мышкой
-    // ball.x < x < ball.x + ballsize
-  }
 };
 
-function grabBall(ball, e) {
-  let shiftX = ball.x - e.clientX;
-  let shiftY = ball.y - e.clientY;
+function grabBall(ball, pointerX, pointerY) {
+  let shiftX = ball.x - pointerX;
+  let shiftY = ball.y - pointerY;
   // console.log(shiftX, shiftY);
 
   board.addEventListener("pointermove", moveBall);
 
   function moveBall(e) {
-    let mouseX = e.clientX;
-    let mouseY = e.clientY;
-    let posX = mouseX - boardX + shiftX;
-    let posY = mouseY - boardY + shiftY;
+    let pointerX = e.clientX;
+    let pointerY = e.clientY;
+    let posX = pointerX - boardX + shiftX;
+    let posY = pointerY - boardY + shiftY;
     ball.setXY(posX, posY);
   }
 
-  ball.html.addEventListener("pointerup", function () {
+  ball.html.onpointerup = function () {
     board.removeEventListener("pointermove", moveBall);
-    //this.removeEventListener('pointerup')
     this.onpointerup = null;
-  });
+  };
 }
