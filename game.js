@@ -1,4 +1,4 @@
-const balls = document.querySelectorAll(".ball");
+const modal = document.querySelector(".game-over");
 const scoreField = document.querySelector(".score");
 const board = document.querySelector(".board");
 
@@ -21,9 +21,10 @@ const boardW = board.clientWidth;
 const boardH = board.clientHeight;
 
 function Ball() {
+  // coordinates at board grid
   this.col = 0;
   this.row = 0;
-  //absolute screen coordinates
+  // absolute screen coordinates
   this.x = 0;
   this.y = 0;
 
@@ -54,8 +55,6 @@ function Ball() {
     // console.log(this.x, this.y);
   };
 
-  // TODO: deletHTML method
-  // TODO: replace with string templates
   function createHtmlElement(points) {
     const ball = document.createElement("div");
     ball.innerText = points;
@@ -84,7 +83,6 @@ function addNewBalls() {
 }
 
 function liftBalls() {
-  console.log("asdasdasd");
   for (let col = 0; col < grid.length; col++) {
     for (let row = 0; row < grid[col].length; row++) {
       grid[col][row].setPos(col, row);
@@ -153,15 +151,17 @@ function grabBall(ball, pointerX, pointerY) {
       // add to selected column
       grid[col].push(ball);
       // check match between 2 last balls in column after gamer turn
-      // if not add new row and check for matching again
+      // if no match than add new row and check for matching again
       if (!checkMatch(grid[col])) {
-        setTimeout(() => {
-          addNewBalls();
-          grid.forEach((col) => {
-            // TODO check all matches
-            checkMatch(col);
-          });
-        }, 700);
+        if (!gameOver()) {
+          setTimeout(() => {
+            addNewBalls();
+            grid.forEach((col) => {
+              // TODO check all matches ???
+              checkMatch(col);
+            });
+          }, 300);
+        }
       }
     } else {
       // return to previous position
@@ -195,6 +195,21 @@ function checkMatch(col) {
 
     // check match again
     checkMatch(col);
+    return true;
+  } else {
+    return false;
+  }
+
+  // if (col.length > 1) {
+  //   for (let i = 0; i < col.length; i++) {
+
+  //   }
+  // }
+}
+
+function gameOver() {
+  if (grid.find((col) => col.length === 7)) {
+    modal.classList.remove("hidden");
     return true;
   } else {
     return false;

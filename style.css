@@ -71,3 +71,26 @@ body {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
   z-index: 1;
 }
+
+.game-over {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(3px);
+}
+
+.game-over p {
+  color: #fff;
+  font-size: 2rem;
+  text-transform: uppercase;
+}
+
+.hidden {
+  display: none;
+}
