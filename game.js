@@ -144,15 +144,25 @@ function grabBall(ball, pointerX, pointerY) {
     let col = Math.trunc((pointerX - boardX) / (gap + cell));
     let row = Math.trunc(7 - (pointerY - boardY) / (gap + cell));
 
-    if (row >= grid[col].length) {
+    // if gamer places selected ball in another column above last ball
+    if (ball.col != col && row >= grid[col].length) {
       // delete ball from previous column
       grid[ball.col].pop(ball);
       // set new position of the ball
       ball.setPos(col, grid[col].length);
       // add to selected column
       grid[col].push(ball);
-      // check match between 2 last balls in column
-      if (!checkMatch(grid[col])) addNewBalls();
+      // check match between 2 last balls in column after gamer turn
+      // if not add new row and check for matching again
+      if (!checkMatch(grid[col])) {
+        setTimeout(() => {
+          addNewBalls();
+          grid.forEach((col) => {
+            // TODO check all matches
+            checkMatch(col);
+          });
+        }, 700);
+      }
     } else {
       // return to previous position
       ball.setPos(ball.col, ball.row);
