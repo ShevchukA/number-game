@@ -9,7 +9,7 @@ const gap = 20;
 
 let pointsLimit = 3;
 let score = 0;
-scoreField.innerText = `score: ${score}`;
+scoreField.innerText = `score:  ${score}`;
 
 // set gamefield sizes;
 board.style.height = 7 * cell + 8 * gap + "px";
@@ -76,10 +76,20 @@ function addNewBalls() {
   for (let i = 0; i < 5; i++) {
     const ball = new Ball();
     board.appendChild(ball.html);
-    ball.setPos(i, 0);
+    ball.setPos(i, -1);
     grid[i].unshift(ball);
+    liftBalls();
   }
   console.log(grid);
+}
+
+function liftBalls() {
+  console.log("asdasdasd");
+  for (let col = 0; col < grid.length; col++) {
+    for (let row = 0; row < grid[col].length; row++) {
+      grid[col][row].setPos(col, row);
+    }
+  }
 }
 
 addNewBalls();
@@ -114,7 +124,6 @@ function grabBall(ball, pointerX, pointerY) {
   // define shift between pointer and ball coordinates
   let shiftX = ball.x - pointerX;
   let shiftY = ball.y - pointerY;
-  // console.log(shiftX, shiftY);
   console.log(ball);
 
   board.addEventListener("pointermove", moveBall);
@@ -135,7 +144,6 @@ function grabBall(ball, pointerX, pointerY) {
     let col = Math.trunc((pointerX - boardX) / (gap + cell));
     let row = Math.trunc(7 - (pointerY - boardY) / (gap + cell));
 
-    // TODO проверить что в тот же ряд опускается шарик
     if (row >= grid[col].length) {
       // delete ball from previous column
       grid[ball.col].pop(ball);
@@ -143,13 +151,11 @@ function grabBall(ball, pointerX, pointerY) {
       ball.setPos(col, grid[col].length);
       // add to selected column
       grid[col].push(ball);
-      // check match between last and privious ball in column
-      checkMatch(grid[col]);
+      // check match between 2 last balls in column
+      if (!checkMatch(grid[col])) addNewBalls();
     } else {
       // return to previous position
       ball.setPos(ball.col, ball.row);
-      // add to previous column
-      //grid[col].push(ball);
     }
 
     console.log(grid);
@@ -166,18 +172,21 @@ function checkMatch(col) {
   удаляем верхний 
   */
 
-  // console.log("1111", col.at(-2).points);
-  // if column has more than 2 balls and last 2 balls have same points than mach
+  // if column has more than 1 ball and last 2 balls have same points than match
   if (col.length > 1 && col.at(-1).points === col.at(-2).points) {
     console.log("match!");
     let achievedPoints = col.at(-1).points * 2;
-    console.log(achievedPoints);
-
     score += achievedPoints;
-    scoreField.innerText = `score: ${score}`;
-    col.at(-2).updatePoints(achievedPoints);
+    scoreField.innerText = `score:  ${score}`;
 
+    // combine two balls
+    col.at(-2).updatePoints(achievedPoints);
     col.pop().html.remove();
+
+    // check match again
     checkMatch(col);
+    return true;
+  } else {
+    return false;
   }
 }
