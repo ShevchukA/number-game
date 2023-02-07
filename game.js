@@ -1,6 +1,6 @@
-const modal = document.querySelector(".game-over");
-const scoreField = document.querySelector(".score");
-const board = document.querySelector(".board");
+const modal = document.querySelector('.game-over');
+const scoreField = document.querySelector('.score');
+const board = document.querySelector('.board');
 
 const grid = [[], [], [], [], []];
 const ballSize = 50;
@@ -12,8 +12,8 @@ let score = 0;
 scoreField.innerText = `score:  ${score}`;
 
 // set gamefield sizes;
-board.style.height = 7 * cell + 8 * gap + "px";
-board.style.width = 5 * cell + 6 * gap + "px";
+board.style.height = 7 * cell + 8 * gap + 'px';
+board.style.width = 5 * cell + 6 * gap + 'px';
 
 const boardX = board.getBoundingClientRect().left;
 const boardY = board.getBoundingClientRect().top;
@@ -47,8 +47,8 @@ function Ball() {
   };
   // set coordinates relative to the board
   this.setXY = function (x, y) {
-    this.html.style.left = x + "px";
-    this.html.style.top = y + "px";
+    this.html.style.left = x + 'px';
+    this.html.style.top = y + 'px';
     //update absolute screen coordinates
     this.x = this.html.getBoundingClientRect().left;
     this.y = this.html.getBoundingClientRect().top;
@@ -56,9 +56,9 @@ function Ball() {
   };
 
   function createHtmlElement(points) {
-    const ball = document.createElement("div");
+    const ball = document.createElement('div');
     ball.innerText = points;
-    ball.classList.add("ball");
+    ball.classList.add('ball');
     ball.style.width = `${ballSize}px`;
     ball.style.height = `${ballSize}px`;
     return ball;
@@ -124,7 +124,7 @@ function grabBall(ball, pointerX, pointerY) {
   let shiftY = ball.y - pointerY;
   console.log(ball);
 
-  board.addEventListener("pointermove", moveBall);
+  board.addEventListener('pointermove', moveBall);
 
   function moveBall(e) {
     let pointerX = e.clientX;
@@ -135,7 +135,7 @@ function grabBall(ball, pointerX, pointerY) {
   }
 
   board.onpointerup = function (e) {
-    board.removeEventListener("pointermove", moveBall);
+    board.removeEventListener('pointermove', moveBall);
     // define cell under the pointer
     let pointerX = e.clientX;
     let pointerY = e.clientY;
@@ -156,7 +156,7 @@ function grabBall(ball, pointerX, pointerY) {
         if (!gameOver()) {
           setTimeout(() => {
             addNewBalls();
-            grid.forEach((col) => {
+            grid.forEach(col => {
               // TODO check all matches ???
               checkMatch(col);
             });
@@ -184,7 +184,7 @@ function checkMatch(col) {
 
   // if column has more than 1 ball and last 2 balls have same points than match
   if (col.length > 1 && col.at(-1).points === col.at(-2).points) {
-    console.log("match!");
+    console.log('match!');
     let achievedPoints = col.at(-1).points * 2;
     score += achievedPoints;
     scoreField.innerText = `score:  ${score}`;
@@ -199,17 +199,11 @@ function checkMatch(col) {
   } else {
     return false;
   }
-
-  // if (col.length > 1) {
-  //   for (let i = 0; i < col.length; i++) {
-
-  //   }
-  // }
 }
 
 function gameOver() {
-  if (grid.find((col) => col.length === 7)) {
-    modal.classList.remove("hidden");
+  if (grid.find(col => col.length === 7)) {
+    modal.classList.remove('hidden');
     return true;
   } else {
     return false;
