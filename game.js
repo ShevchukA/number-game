@@ -27,8 +27,17 @@ function Ball() {
   this.col = 0;
   this.row = 0;
   // absolute screen coordinates
-  this.x = 0;
-  this.y = 0;
+  this.getX = function () {
+    return this.html.getBoundingClientRect().left;
+    console.log('asdasdad');
+  };
+
+  this.getY = function () {
+    return this.html.getBoundingClientRect().top;
+  };
+
+  // this.x = 0;
+  // this.y = 0;
 
   this.points = getRundomPoints(pointsLimit);
   this.html = createHtmlElement(this.points);
@@ -52,8 +61,9 @@ function Ball() {
     this.html.style.left = x + 'px';
     this.html.style.top = y + 'px';
     //update absolute screen coordinates
-    this.x = this.html.getBoundingClientRect().left;
-    this.y = this.html.getBoundingClientRect().top;
+    //this.x = this.html.getBoundingClientRect().left;
+    //this.y = this.html.getBoundingClientRect().top;
+
     // console.log(this.x, this.y);
   };
 
@@ -114,7 +124,7 @@ board.onpointerdown = function (e) {
   if (grid[col][row] && row === grid[col].length - 1) {
     let ball = grid[col][row];
     // check if pointer down exactly on the ball than grab the ball
-    if (pointerX > ball.x && pointerY > ball.y) {
+    if (pointerX > ball.getX() && pointerY > ball.getY()) {
       grabBall(ball, pointerX, pointerY);
     }
   }
@@ -122,8 +132,8 @@ board.onpointerdown = function (e) {
 
 function grabBall(ball, pointerX, pointerY) {
   // define shift between pointer and ball coordinates
-  let shiftX = ball.x - pointerX;
-  let shiftY = ball.y - pointerY;
+  let shiftX = ball.getX() - pointerX;
+  let shiftY = ball.getY() - pointerY;
   console.log(ball);
 
   board.addEventListener('pointermove', moveBall);
