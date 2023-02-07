@@ -28,7 +28,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  border-bottom: 2px solid #fff;
 }
 
 .main {
@@ -44,13 +43,12 @@ body {
 
 .board {
   position: relative;
-  top: 50px;
+  top: 20px;
   left: 50%;
   transform: translateX(-50%);
   backface-visibility: hidden;
   border: 2px solid #fff;
-
-  /* overflow: hidden; */
+  border-radius: 30px;
 }
 
 .ball {

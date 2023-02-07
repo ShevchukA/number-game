@@ -11,7 +11,6 @@ const rowN = 7;
 
 let pointsLimit = 3;
 let score = 0;
-scoreField.innerText = `score:  ${score}`;
 
 // set gamefield sizes;
 board.style.height = `${rowN * cell + (rowN + 1) * gap}px`;
@@ -26,21 +25,18 @@ function Ball() {
   // coordinates at board grid
   this.col = 0;
   this.row = 0;
-  // absolute screen coordinates
+  this.points = getRundomPoints(pointsLimit);
+  this.html = createHtmlElement(this.points);
+
+  // get absolute screen coordinates
   this.getX = function () {
     return this.html.getBoundingClientRect().left;
-    console.log('asdasdad');
   };
 
   this.getY = function () {
     return this.html.getBoundingClientRect().top;
   };
 
-  // this.x = 0;
-  // this.y = 0;
-
-  this.points = getRundomPoints(pointsLimit);
-  this.html = createHtmlElement(this.points);
   // get and set new points
   this.updatePoints = function (newPoints) {
     this.points = newPoints;
@@ -83,6 +79,10 @@ function Ball() {
   }
 }
 
+function updateScore(score) {
+  scoreField.innerText = `score:  ${score}`;
+}
+
 function addNewBalls() {
   for (let i = 0; i < colN; i++) {
     const ball = new Ball();
@@ -102,6 +102,7 @@ function liftBalls() {
   }
 }
 
+updateScore(score);
 addNewBalls();
 
 board.onpointerdown = function (e) {
@@ -199,7 +200,7 @@ function checkMatch(col) {
     console.log('match!');
     let achievedPoints = col.at(-1).points * 2;
     score += achievedPoints;
-    scoreField.innerText = `score:  ${score}`;
+    updateScore(score);
 
     // combine two balls
     col.at(-2).updatePoints(achievedPoints);
