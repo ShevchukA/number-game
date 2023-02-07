@@ -115,10 +115,11 @@ board.onpointerdown = function (e) {
   добавить шарик в массив
   */
   // define cell under the pointer
-  let pointerX = e.clientX;
-  let pointerY = e.clientY;
-  let col = Math.trunc((pointerX - boardX) / (gap + cell));
-  let row = Math.trunc(rowN - (pointerY - boardY) / (gap + cell));
+  let [pointerX, pointerY, col, row] = defineCoordinates(e);
+  // let pointerX = e.clientX;
+  // let pointerY = e.clientY;
+  // let col = Math.trunc((pointerX - boardX) / (gap + cell));
+  // let row = Math.trunc(rowN - (pointerY - boardY) / (gap + cell));
   console.log(col, row);
 
   // if top cell in column contain the ball then can move ball
@@ -140,8 +141,9 @@ function grabBall(ball, pointerX, pointerY) {
   board.addEventListener('pointermove', moveBall);
 
   function moveBall(e) {
-    let pointerX = e.clientX;
-    let pointerY = e.clientY;
+    let [pointerX, pointerY] = defineCoordinates(e);
+    // let pointerX = e.clientX;
+    // let pointerY = e.clientY;
     let posX = pointerX - boardX + shiftX;
     let posY = pointerY - boardY + shiftY;
     ball.setXY(posX, posY);
@@ -150,10 +152,11 @@ function grabBall(ball, pointerX, pointerY) {
   board.onpointerup = function (e) {
     board.removeEventListener('pointermove', moveBall);
     // define cell under the pointer
-    let pointerX = e.clientX;
-    let pointerY = e.clientY;
-    let col = Math.trunc((pointerX - boardX) / (gap + cell));
-    let row = Math.trunc(rowN - (pointerY - boardY) / (gap + cell));
+    let [pointerX, pointerY, col, row] = defineCoordinates(e);
+    // let pointerX = e.clientX;
+    // let pointerY = e.clientY;
+    // let col = Math.trunc((pointerX - boardX) / (gap + cell));
+    // let row = Math.trunc(rowN - (pointerY - boardY) / (gap + cell));
 
     // if gamer places selected ball in another column above last ball
     if (ball.col != col && row >= grid[col].length) {
@@ -184,6 +187,14 @@ function grabBall(ball, pointerX, pointerY) {
     console.log(grid);
     this.onpointerup = null;
   };
+}
+
+function defineCoordinates(e) {
+  let pointerX = e.clientX;
+  let pointerY = e.clientY;
+  let col = Math.trunc((pointerX - boardX) / (gap + cell));
+  let row = Math.trunc(rowN - (pointerY - boardY) / (gap + cell));
+  return [pointerX, pointerY, col, row];
 }
 
 function checkMatch(col) {
