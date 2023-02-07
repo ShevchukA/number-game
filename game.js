@@ -105,6 +105,11 @@ function liftBalls() {
 updateScore(score);
 addNewBalls();
 
+// Prevent browser default drag'n'drop behaviour
+board.ondragstart = function () {
+  return false;
+};
+
 board.onpointerdown = function (e) {
   /*
   определить клетку row и col, поделив координаты на gap+cell

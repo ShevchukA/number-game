@@ -15,23 +15,25 @@ Dark green: #28b485
 }
 
 body {
-  text-align: center;
   height: 100vh;
   background-image: linear-gradient(to top, rgb(126, 213, 111), rgb(40, 180, 131));
   background-size: cover;
   background-repeat: no-repeat;
   font-family: 'Lato', sans-serif;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .ui {
-  height: 10vh;
+  height: 50px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .main {
-  height: 90vh;
   position: relative;
 }
 
@@ -43,12 +45,12 @@ body {
 
 .board {
   position: relative;
-  top: 20px;
   left: 50%;
   transform: translateX(-50%);
   backface-visibility: hidden;
   border: 2px solid #fff;
   border-radius: 30px;
+  touch-action: none;
 }
 
 .ball {
