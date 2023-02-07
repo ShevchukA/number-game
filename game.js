@@ -6,14 +6,16 @@ const grid = [[], [], [], [], []];
 const ballSize = 50;
 const cell = 50;
 const gap = 20;
+const colN = 5;
+const rowN = 7;
 
 let pointsLimit = 3;
 let score = 0;
 scoreField.innerText = `score:  ${score}`;
 
 // set gamefield sizes;
-board.style.height = 7 * cell + 8 * gap + 'px';
-board.style.width = 5 * cell + 6 * gap + 'px';
+board.style.height = `${rowN * cell + (rowN + 1) * gap}px`;
+board.style.width = `${colN * cell + (colN + 1) * gap}px`;
 
 const boardX = board.getBoundingClientRect().left;
 const boardY = board.getBoundingClientRect().top;
@@ -42,7 +44,7 @@ function Ball() {
     this.row = row;
     // set coordinates relative to the board
     let x = gap + col * cell + col * gap;
-    let y = gap + (6 - row) * cell + (6 - row) * gap;
+    let y = gap + (rowN - row - 1) * cell + (rowN - row - 1) * gap;
     this.setXY(x, y);
   };
   // set coordinates relative to the board
@@ -72,7 +74,7 @@ function Ball() {
 }
 
 function addNewBalls() {
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < colN; i++) {
     const ball = new Ball();
     board.appendChild(ball.html);
     ball.setPos(i, -1);
@@ -105,7 +107,7 @@ board.onpointerdown = function (e) {
   let pointerX = e.clientX;
   let pointerY = e.clientY;
   let col = Math.trunc((pointerX - boardX) / (gap + cell));
-  let row = Math.trunc(7 - (pointerY - boardY) / (gap + cell));
+  let row = Math.trunc(rowN - (pointerY - boardY) / (gap + cell));
   console.log(col, row);
 
   // if top cell in column contain the ball then can move ball
@@ -140,7 +142,7 @@ function grabBall(ball, pointerX, pointerY) {
     let pointerX = e.clientX;
     let pointerY = e.clientY;
     let col = Math.trunc((pointerX - boardX) / (gap + cell));
-    let row = Math.trunc(7 - (pointerY - boardY) / (gap + cell));
+    let row = Math.trunc(rowN - (pointerY - boardY) / (gap + cell));
 
     // if gamer places selected ball in another column above last ball
     if (ball.col != col && row >= grid[col].length) {
@@ -202,7 +204,7 @@ function checkMatch(col) {
 }
 
 function gameOver() {
-  if (grid.find(col => col.length === 7)) {
+  if (grid.find(col => col.length === rowN)) {
     modal.classList.remove('hidden');
     return true;
   } else {
