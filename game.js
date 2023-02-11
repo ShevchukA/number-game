@@ -133,6 +133,22 @@ function grabBall(ball, pointerX, pointerY) {
     let posX = pointerX - boardX + shiftX;
     let posY = pointerY - boardY + shiftY;
     ball.setXY(posX, posY);
+    checkBoundaries(ball);
+  }
+
+  function checkBoundaries(ball) {
+    if (
+      ball.getX() < boardX ||
+      ball.getY() < boardY ||
+      ball.getX() + ballSize > boardX + boardW ||
+      ball.getY() + ballSize > boardY + boardH
+    ) {
+      // remove event handlers
+      board.removeEventListener('pointermove', moveBall);
+      board.onpointerup = null;
+      // return to previous position
+      ball.setPos(ball.col, ball.row);
+    }
   }
 
   board.onpointerup = function (e) {
