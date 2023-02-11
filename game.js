@@ -25,7 +25,7 @@ function Ball() {
   // coordinates at board grid
   this.col = 0;
   this.row = 0;
-  this.points = getRundomPoints(pointsLimit);
+  this.points = getRandomPoints(pointsLimit);
   this.html = createHtmlElement(this.points);
 
   // get absolute screen coordinates
@@ -56,11 +56,6 @@ function Ball() {
   this.setXY = function (x, y) {
     this.html.style.left = x + 'px';
     this.html.style.top = y + 'px';
-    //update absolute screen coordinates
-    //this.x = this.html.getBoundingClientRect().left;
-    //this.y = this.html.getBoundingClientRect().top;
-
-    // console.log(this.x, this.y);
   };
 
   function createHtmlElement(points) {
@@ -72,10 +67,10 @@ function Ball() {
     return ball;
   }
 
-  function getRundomPoints(lim) {
+  function getRandomPoints(lim) {
     const points = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048];
-    let rundomNum = Math.trunc(Math.random() * lim);
-    return points[rundomNum];
+    let randomNum = Math.trunc(Math.random() * lim);
+    return points[randomNum];
   }
 }
 
@@ -111,20 +106,8 @@ board.ondragstart = function () {
 };
 
 board.onpointerdown = function (e) {
-  /*
-  определить клетку row и col, поделив координаты на gap+cell
-  посмотреть в массив grid[row][col] на наличие шарика
-  при отпускании мышки определить col, 
-  затем определить номер row по длине массива
-  задать свойства шарику row и col через метод setPos и вызвать пересчет setXY
-  добавить шарик в массив
-  */
   // define cell under the pointer
-  let [pointerX, pointerY, col, row] = defineCoordinates(e);
-  // let pointerX = e.clientX;
-  // let pointerY = e.clientY;
-  // let col = Math.trunc((pointerX - boardX) / (gap + cell));
-  // let row = Math.trunc(rowN - (pointerY - boardY) / (gap + cell));
+  let { pointerX, pointerY, col, row } = defineCoordinates(e);
   console.log(col, row);
 
   // if top cell in column contain the ball then can move ball
@@ -146,9 +129,7 @@ function grabBall(ball, pointerX, pointerY) {
   board.addEventListener('pointermove', moveBall);
 
   function moveBall(e) {
-    let [pointerX, pointerY] = defineCoordinates(e);
-    // let pointerX = e.clientX;
-    // let pointerY = e.clientY;
+    let { pointerX, pointerY } = defineCoordinates(e);
     let posX = pointerX - boardX + shiftX;
     let posY = pointerY - boardY + shiftY;
     ball.setXY(posX, posY);
@@ -157,11 +138,7 @@ function grabBall(ball, pointerX, pointerY) {
   board.onpointerup = function (e) {
     board.removeEventListener('pointermove', moveBall);
     // define cell under the pointer
-    let [pointerX, pointerY, col, row] = defineCoordinates(e);
-    // let pointerX = e.clientX;
-    // let pointerY = e.clientY;
-    // let col = Math.trunc((pointerX - boardX) / (gap + cell));
-    // let row = Math.trunc(rowN - (pointerY - boardY) / (gap + cell));
+    let { col, row } = defineCoordinates(e);
 
     // if gamer places selected ball in another column above last ball
     if (ball.col != col && row >= grid[col].length) {
@@ -173,14 +150,12 @@ function grabBall(ball, pointerX, pointerY) {
       grid[col].push(ball);
       // check match between 2 last balls in column after gamer turn
       // if no match than add new row and check for matching again
+      // checkMatch(grid[col]) || gameOver() || setTimeout(() => {}
       if (!checkMatch(grid[col])) {
         if (!gameOver()) {
           setTimeout(() => {
             addNewBalls();
-            grid.forEach(col => {
-              // TODO check all matches ???
-              checkMatch(col);
-            });
+            grid.forEach(col => checkMatch(col));
           }, 300);
         }
       }
@@ -199,18 +174,10 @@ function defineCoordinates(e) {
   let pointerY = e.clientY;
   let col = Math.trunc((pointerX - boardX) / (gap + cell));
   let row = Math.trunc(rowN - (pointerY - boardY) / (gap + cell));
-  return [pointerX, pointerY, col, row];
+  return { pointerX, pointerY, col, row };
 }
 
 function checkMatch(col) {
-  /*
-  сравниваем последний и предыдущий шарик
-  если очки равны, то складываем очки
-  двигаем верхний шарик вниз
-  меняем очки в предыдущем шарике
-  удаляем верхний 
-  */
-
   // if column has more than 1 ball and last 2 balls have same points than match
   if (col.length > 1 && col.at(-1).points === col.at(-2).points) {
     console.log('match!');
@@ -218,7 +185,7 @@ function checkMatch(col) {
     score += achievedPoints;
     updateScore(score);
 
-    // combine two balls
+    // merge two balls
     col.at(-2).updatePoints(achievedPoints);
     col.pop().html.remove();
 
