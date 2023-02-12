@@ -136,6 +136,7 @@ body {
   align-items: center;
   justify-content: center;
   backdrop-filter: blur(3px);
+  z-index: 2;
 }
 
 .game-over p {

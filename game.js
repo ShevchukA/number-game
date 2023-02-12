@@ -8,6 +8,7 @@ const cell = 50;
 const gap = 20;
 const colN = 5;
 const rowN = 7;
+const speed = 10;
 
 let pointsLimit = 3;
 let score = 0;
@@ -20,6 +21,14 @@ const boardX = board.getBoundingClientRect().left;
 const boardY = board.getBoundingClientRect().top;
 const boardW = board.clientWidth;
 const boardH = board.clientHeight;
+
+function getLeftFromCol(col) {
+  return gap + col * cell + col * gap;
+}
+
+function getTopFromRow(row) {
+  return gap + (rowN - row - 1) * cell + (rowN - row - 1) * gap;
+}
 
 function Ball() {
   // coordinates at board grid
@@ -37,6 +46,15 @@ function Ball() {
     return this.html.getBoundingClientRect().top;
   };
 
+  // get relative to the board coordinates
+  this.getLeft = function () {
+    return Number(this.html.style.left.replace('px', ''));
+  };
+
+  this.getTop = function () {
+    return Number(this.html.style.top.replace('px', ''));
+  };
+
   // get and set new points
   this.updatePoints = function (newPoints) {
     this.points = newPoints;
@@ -48,15 +66,18 @@ function Ball() {
     this.col = col;
     this.row = row;
     // set coordinates relative to the board
-    let x = gap + col * cell + col * gap;
-    let y = gap + (rowN - row - 1) * cell + (rowN - row - 1) * gap;
-    this.setXY(x, y);
+    let left = getLeftFromCol(col);
+    let top = getTopFromRow(row);
+    this.setLeftTop(left, top);
+    // задать позицию в анимации
+    // start animation
+    //this.animate(left, top);
   };
+
   // set coordinates relative to the board
-  this.setXY = function (x, y) {
-    // анимация тут?
-    this.html.style.left = `${x}px`;
-    this.html.style.top = `${y}px`;
+  this.setLeftTop = function (left, top) {
+    this.html.style.left = `${left}px`;
+    this.html.style.top = `${top}px`;
   };
 
   function createHtmlElement(points) {
@@ -76,6 +97,49 @@ function Ball() {
   }
 }
 
+let animationIsPlaying = false;
+
+function animateBall(ball, col, row, onAnimationFinished) {
+  // do animation
+  let left = getLeftFromCol(col);
+  let top = getTopFromRow(row);
+
+  // if (ball.getTop() < top) {
+  //   isAnnimated = true;
+  //   ball.html.style.top = `${ball.getTop() + 1}px`;
+  //   requestAnimationFrame(() => animateBall(ball, left, top));
+  // }
+
+  if (ball.getTop() < top) {
+    let y = ball.getTop() + speed > top ? top : ball.getTop() + speed;
+    animationIsPlaying = true;
+    ball.setLeftTop(left, y);
+    requestAnimationFrame(() =>
+      animateBall(ball, col, row, onAnimationFinished)
+    );
+  } else {
+    animationIsPlaying = false;
+  }
+  console.log(animationIsPlaying);
+  if (!animationIsPlaying) onAnimationFinished();
+
+  // if (ball.getLeft() < left) {
+  //   isAnnimated = true;
+  //   ball.html.style.left = `${ball.getLeft() + 1}px`;
+  //   requestAnimationFrame(() => animateBall(ball, left, top));
+  // }
+
+  // if (ball.getLeft() > left) {
+  //   isAnnimated = true;
+  //   ball.html.style.left = `${ball.getLeft() - 1}px`;
+  //   requestAnimationFrame(() => animateBall(ball, left, top));
+  // }
+
+  // isAnnimated = false;
+  // if (!isAnnimated) ball.setPos(col, row);
+}
+
+/*
 function Aim() {
   this.col = 0;
   this.row = 0;
@@ -97,14 +161,13 @@ function Aim() {
     }px`;
   };
 }
-
+*/
 function updateScore(score) {
   scoreField.innerText = `score:  ${score}`;
 }
 
 function addNewBalls() {
   for (let i = 0; i < colN; i++) {
-    //liftBalls();
     const ball = new Ball();
     ball.setPos(i, 0);
     grid[i].unshift(ball);
@@ -116,6 +179,7 @@ function addNewBalls() {
 function liftBalls() {
   for (let col = 0; col < grid.length; col++) {
     for (let row = 0; row < grid[col].length; row++) {
+      // animation!!!!!
       grid[col][row].setPos(col, row);
     }
   }
@@ -123,32 +187,6 @@ function liftBalls() {
 
 updateScore(score);
 addNewBalls();
-
-function addAim(col, row) {
-  const aim = document.createElement('div');
-  aim.classList.add('aim');
-  aim.style.width = `${ballSize}px`;
-  aim.style.height = `${ballSize}px`;
-  aim.style.left = `${gap + col * cell + col * gap}px`;
-  aim.style.top = `${gap + (rowN - row - 1) * cell + (rowN - row - 1) * gap}px`;
-  board.appendChild(aim);
-}
-
-function showAims(exept) {
-  // for each column show possible aim for user
-  for (let col = 0; col < grid.length; col++) {
-    let row = grid[col].length;
-    if (col != exept && row < rowN) {
-      addAim(col, row);
-    }
-  }
-}
-
-function hideAims() {
-  // remove all aims from the board
-  const aims = document.querySelectorAll('.aim');
-  aims.forEach(aim => aim.remove());
-}
 
 // Prevent browser default drag'n'drop behaviour
 board.ondragstart = function () {
@@ -166,8 +204,6 @@ board.onpointerdown = function (e) {
     // check if pointer down exactly on the ball than grab the ball
     if (pointerX > ball.getX() && pointerY > ball.getY()) {
       grabBall(ball, pointerX, pointerY);
-
-      //!!!!!
       showAims(col);
     }
   }
@@ -183,9 +219,10 @@ function grabBall(ball, pointerX, pointerY) {
 
   function moveBall(e) {
     let { pointerX, pointerY } = defineCoordinates(e);
-    let posX = pointerX - boardX + shiftX;
-    let posY = pointerY - boardY + shiftY;
-    ball.setXY(posX, posY);
+    // set relative to the board coordinates
+    let left = pointerX - boardX + shiftX;
+    let top = pointerY - boardY + shiftY;
+    ball.setLeftTop(left, top);
     checkBoundaries(ball);
   }
 
@@ -199,6 +236,8 @@ function grabBall(ball, pointerX, pointerY) {
       // remove event handlers
       board.removeEventListener('pointermove', moveBall);
       board.onpointerup = null;
+      // hide all aims
+      hideAims();
       // return to previous position
       ball.setPos(ball.col, ball.row);
     }
@@ -212,20 +251,25 @@ function grabBall(ball, pointerX, pointerY) {
 
     // if gamer places selected ball in another column above last ball
     if (ball.col != col && row >= grid[col].length) {
-      // delete ball from previous column
-      grid[ball.col].pop(ball);
-      // set new position of the ball
-      ball.setPos(col, grid[col].length);
-      // add to selected column
-      grid[col].push(ball);
-      // check match between 2 last balls in column after gamer turn
-      // if no match than add new row and check for matching again
-      if (!checkMatch(grid[col])) {
-        if (!gameOver()) {
-          setTimeout(() => {
-            addNewBalls();
-            grid.forEach(col => checkMatch(col));
-          }, 300);
+      // animate drop movement
+      animateBall(ball, col, grid[col].length, onDropFinish);
+      // callback events after animation
+      function onDropFinish() {
+        // delete ball from previous column
+        grid[ball.col].pop(ball);
+        // set new position of the ball
+        ball.setPos(col, grid[col].length);
+        // add to selected column
+        grid[col].push(ball);
+        // check match between 2 last balls in column after gamer turn
+        // if no match than add new row and check for matching again
+        if (!checkMatch(grid[col])) {
+          if (!gameOver()) {
+            setTimeout(() => {
+              addNewBalls();
+              grid.forEach(col => checkMatch(col));
+            }, 300);
+          }
         }
       }
     } else {
@@ -268,6 +312,7 @@ function checkMatch(col) {
 
 function gameOver() {
   if (grid.find(col => col.length === rowN)) {
+    // show modal
     modal.classList.remove('hidden');
     return true;
   } else {
@@ -275,12 +320,28 @@ function gameOver() {
   }
 }
 
-const animate = () => {
-  // do animation
+function addAim(col, row) {
+  const aim = document.createElement('div');
+  aim.classList.add('aim');
+  aim.style.width = `${ballSize}px`;
+  aim.style.height = `${ballSize}px`;
+  aim.style.left = `${getLeftFromCol(col)}px`;
+  aim.style.top = `${getTopFromRow(row)}px`;
+  board.appendChild(aim);
+}
 
-  // request new frame
-  requestAnimationFrame(animate);
-};
+function showAims(exept) {
+  // for each column show possible aim for user
+  for (let col = 0; col < grid.length; col++) {
+    let row = grid[col].length;
+    if (col != exept && row < rowN) {
+      addAim(col, row);
+    }
+  }
+}
 
-// start animation
-requestAnimationFrame(animate);
+function hideAims() {
+  // remove all aims from the board
+  const aims = document.querySelectorAll('.aim');
+  aims.forEach(aim => aim.remove());
+}
