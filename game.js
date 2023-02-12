@@ -54,8 +54,8 @@ function Ball() {
   };
   // set coordinates relative to the board
   this.setXY = function (x, y) {
-    this.html.style.left = x + 'px';
-    this.html.style.top = y + 'px';
+    this.html.style.left = `${x}px`;
+    this.html.style.top = `${y}px`;
   };
 
   function createHtmlElement(points) {
@@ -64,6 +64,7 @@ function Ball() {
     ball.classList.add('ball');
     ball.style.width = `${ballSize}px`;
     ball.style.height = `${ballSize}px`;
+    board.appendChild(ball);
     return ball;
   }
 
@@ -74,6 +75,28 @@ function Ball() {
   }
 }
 
+function Aim() {
+  this.col = 0;
+  this.row = 0;
+  this.html = createHtmlElement();
+
+  function createHtmlElement() {
+    const aim = document.createElement('div');
+    aim.classList.add('aim');
+    aim.style.width = `${ballSize}px`;
+    aim.style.height = `${ballSize}px`;
+    board.appendChild(aim);
+    return aim;
+  }
+
+  this.setPos = function (col, row) {
+    this.html.style.left = `${gap + col * cell + col * gap}px`;
+    this.html.style.top = `${
+      gap + (rowN - row - 1) * cell + (rowN - row - 1) * gap
+    }px`;
+  };
+}
+
 function updateScore(score) {
   scoreField.innerText = `score:  ${score}`;
 }
@@ -81,7 +104,7 @@ function updateScore(score) {
 function addNewBalls() {
   for (let i = 0; i < colN; i++) {
     const ball = new Ball();
-    board.appendChild(ball.html);
+    // board.appendChild(ball.html);
     ball.setPos(i, -1);
     grid[i].unshift(ball);
     liftBalls();
@@ -100,6 +123,32 @@ function liftBalls() {
 updateScore(score);
 addNewBalls();
 
+function addAim(col, row) {
+  const aim = document.createElement('div');
+  aim.classList.add('aim');
+  aim.style.width = `${ballSize}px`;
+  aim.style.height = `${ballSize}px`;
+  aim.style.left = `${gap + col * cell + col * gap}px`;
+  aim.style.top = `${gap + (rowN - row - 1) * cell + (rowN - row - 1) * gap}px`;
+  board.appendChild(aim);
+}
+
+function showAims(exept) {
+  // for each column show possible aim for user
+  for (let col = 0; col < grid.length; col++) {
+    let row = grid[col].length;
+    if (col != exept && row < rowN) {
+      addAim(col, row);
+    }
+  }
+}
+
+function hideAims() {
+  // remove all aims from the board
+  const aims = document.querySelectorAll('.aim');
+  aims.forEach(aim => aim.remove());
+}
+
 // Prevent browser default drag'n'drop behaviour
 board.ondragstart = function () {
   return false;
@@ -116,6 +165,9 @@ board.onpointerdown = function (e) {
     // check if pointer down exactly on the ball than grab the ball
     if (pointerX > ball.getX() && pointerY > ball.getY()) {
       grabBall(ball, pointerX, pointerY);
+
+      //!!!!!
+      showAims(col);
     }
   }
 };
@@ -153,6 +205,7 @@ function grabBall(ball, pointerX, pointerY) {
 
   board.onpointerup = function (e) {
     board.removeEventListener('pointermove', moveBall);
+    hideAims();
     // define cell under the pointer
     let { col, row } = defineCoordinates(e);
 
@@ -221,3 +274,13 @@ function gameOver() {
     return false;
   }
 }
+
+const animate = () => {
+  // do animation
+
+  // request new frame
+  requestAnimationFrame(animate);
+};
+
+// start animation
+requestAnimationFrame(animate);
