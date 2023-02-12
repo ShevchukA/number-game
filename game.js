@@ -54,6 +54,7 @@ function Ball() {
   };
   // set coordinates relative to the board
   this.setXY = function (x, y) {
+    // анимация тут?
     this.html.style.left = `${x}px`;
     this.html.style.top = `${y}px`;
   };
@@ -103,9 +104,9 @@ function updateScore(score) {
 
 function addNewBalls() {
   for (let i = 0; i < colN; i++) {
+    //liftBalls();
     const ball = new Ball();
-    // board.appendChild(ball.html);
-    ball.setPos(i, -1);
+    ball.setPos(i, 0);
     grid[i].unshift(ball);
     liftBalls();
   }
@@ -219,7 +220,6 @@ function grabBall(ball, pointerX, pointerY) {
       grid[col].push(ball);
       // check match between 2 last balls in column after gamer turn
       // if no match than add new row and check for matching again
-      // checkMatch(grid[col]) || gameOver() || setTimeout(() => {}
       if (!checkMatch(grid[col])) {
         if (!gameOver()) {
           setTimeout(() => {
@@ -249,7 +249,7 @@ function defineCoordinates(e) {
 function checkMatch(col) {
   // if column has more than 1 ball and last 2 balls have same points than match
   if (col.length > 1 && col.at(-1).points === col.at(-2).points) {
-    console.log('match!');
+    // console.log('match!');
     let achievedPoints = col.at(-1).points * 2;
     score += achievedPoints;
     updateScore(score);

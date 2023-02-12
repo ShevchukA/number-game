@@ -76,6 +76,17 @@ body {
   user-select: none;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
   position: absolute;
+  animation: showBall 0.3s linear 1 forwards;
+}
+
+@keyframes showBall {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 .ball:hover {
