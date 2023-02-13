@@ -8,7 +8,7 @@ const cell = 50;
 const gap = 20;
 const colN = 5;
 const rowN = 7;
-const speed = 10;
+const delta = 10;
 
 let pointsLimit = 3;
 let score = 0;
@@ -99,44 +99,45 @@ function Ball() {
 
 let animationIsPlaying = false;
 
-function animateBall(ball, col, row, onAnimationFinished) {
-  // do animation
-  let left = getLeftFromCol(col);
-  let top = getTopFromRow(row);
+function moveBall(ball, col, row, onAnimationFinished) {
+  const left = getLeftFromCol(col);
+  const top = getTopFromRow(row);
+  const repeat = function () {
+    requestAnimationFrame(() => moveBall(ball, col, row, onAnimationFinished));
+  };
 
-  // if (ball.getTop() < top) {
-  //   isAnnimated = true;
-  //   ball.html.style.top = `${ball.getTop() + 1}px`;
-  //   requestAnimationFrame(() => animateBall(ball, left, top));
-  // }
-
-  if (ball.getTop() < top) {
-    let y = ball.getTop() + speed > top ? top : ball.getTop() + speed;
+  if (ball.getLeft() != left || ball.getTop() != top) {
+    //do animation
     animationIsPlaying = true;
-    ball.setLeftTop(left, y);
-    requestAnimationFrame(() =>
-      animateBall(ball, col, row, onAnimationFinished)
-    );
+
+    // ball.getTop() < top ? dTop = ball.getTop() + delta : dTop = ball.getTop() - delta
+    // finalTop = dTop > top ?
+    let finalTop;
+    let finalLeft;
+
+    if (ball.getTop() < top) {
+      // move down
+      finalTop = ball.getTop() + delta > top ? top : ball.getTop() + delta;
+    } else {
+      // move up
+      finalTop = ball.getTop() - delta < top ? top : ball.getTop() - delta;
+    }
+
+    if (ball.getLeft() < left) {
+      //move right
+      finalLeft = ball.getLeft() + delta > left ? left : ball.getLeft() + delta;
+    } else {
+      // move left
+      finalLeft = ball.getLeft() - delta < left ? left : ball.getLeft() - delta;
+    }
+
+    ball.setLeftTop(finalLeft, finalTop);
+    repeat();
   } else {
     animationIsPlaying = false;
+    // call next actions after animation
+    onAnimationFinished();
   }
-  console.log(animationIsPlaying);
-  if (!animationIsPlaying) onAnimationFinished();
-
-  // if (ball.getLeft() < left) {
-  //   isAnnimated = true;
-  //   ball.html.style.left = `${ball.getLeft() + 1}px`;
-  //   requestAnimationFrame(() => animateBall(ball, left, top));
-  // }
-
-  // if (ball.getLeft() > left) {
-  //   isAnnimated = true;
-  //   ball.html.style.left = `${ball.getLeft() - 1}px`;
-  //   requestAnimationFrame(() => animateBall(ball, left, top));
-  // }
-
-  // isAnnimated = false;
-  // if (!isAnnimated) ball.setPos(col, row);
 }
 
 /*
@@ -215,9 +216,9 @@ function grabBall(ball, pointerX, pointerY) {
   let shiftY = ball.getY() - pointerY;
   console.log(ball);
 
-  board.addEventListener('pointermove', moveBall);
+  board.addEventListener('pointermove', onPointerMoveBall);
 
-  function moveBall(e) {
+  function onPointerMoveBall(e) {
     let { pointerX, pointerY } = defineCoordinates(e);
     // set relative to the board coordinates
     let left = pointerX - boardX + shiftX;
@@ -234,7 +235,7 @@ function grabBall(ball, pointerX, pointerY) {
       ball.getY() + ballSize > boardY + boardH
     ) {
       // remove event handlers
-      board.removeEventListener('pointermove', moveBall);
+      board.removeEventListener('pointermove', onPointerMoveBall);
       board.onpointerup = null;
       // hide all aims
       hideAims();
@@ -244,7 +245,7 @@ function grabBall(ball, pointerX, pointerY) {
   }
 
   board.onpointerup = function (e) {
-    board.removeEventListener('pointermove', moveBall);
+    board.removeEventListener('pointermove', onPointerMoveBall);
     hideAims();
     // define cell under the pointer
     let { col, row } = defineCoordinates(e);
@@ -252,7 +253,7 @@ function grabBall(ball, pointerX, pointerY) {
     // if gamer places selected ball in another column above last ball
     if (ball.col != col && row >= grid[col].length) {
       // animate drop movement
-      animateBall(ball, col, grid[col].length, onDropFinish);
+      moveBall(ball, col, grid[col].length, onDropFinish);
       // callback events after animation
       function onDropFinish() {
         // delete ball from previous column
@@ -274,7 +275,9 @@ function grabBall(ball, pointerX, pointerY) {
       }
     } else {
       // return to previous position
-      ball.setPos(ball.col, ball.row);
+      moveBall(ball, ball.col, ball.row, () => {
+        ball.setPos(ball.col, ball.row);
+      });
     }
 
     console.log(grid);
