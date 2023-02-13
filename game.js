@@ -1,5 +1,6 @@
 const modal = document.querySelector('.game-over');
 const scoreField = document.querySelector('.score');
+const highScoreField = document.querySelector('.highscore');
 const board = document.querySelector('.board');
 
 const grid = [[], [], [], [], []];
@@ -9,9 +10,14 @@ const gap = 20;
 const colN = 5;
 const rowN = 7;
 const delta = 10;
+const key = 'highscore';
 
 let pointsLimit = 3;
 let score = 0;
+let highscore = localStorage.getItem(key) ?? 0;
+highScoreField.innerText = `highscore: ${highscore}`;
+// reset highscore
+// localStorage.setItem(key, 0);
 
 // set gamefield sizes;
 board.style.height = `${rowN * cell + (rowN + 1) * gap}px`;
@@ -165,6 +171,14 @@ function updateScore(score) {
   scoreField.innerText = `score:  ${score}`;
 }
 
+function updateHighscore() {
+  if (score > highscore) {
+    localStorage.setItem(key, score);
+    highscore = localStorage.getItem(key) ?? score;
+    highScoreField.innerText = `highscore: ${highscore}`;
+  }
+}
+
 function addNewBalls() {
   for (let i = 0; i < colN; i++) {
     const ball = new Ball();
@@ -188,6 +202,7 @@ function liftBalls(onLiftingEnds) {
 }
 
 updateScore(score);
+updateHighscore();
 addNewBalls();
 
 // Prevent browser default drag'n'drop behaviour
@@ -328,7 +343,9 @@ function checkMatch(col) {
 }
 
 function gameOver() {
+  // if one of columns is full than gameover
   if (grid.find(col => col.length === rowN)) {
+    updateHighscore();
     // show modal
     modal.classList.remove('hidden');
     document.querySelector('.game-over p').classList.add('game-over-anim');

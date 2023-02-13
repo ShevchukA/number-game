@@ -47,7 +47,8 @@ body {
   margin-bottom: 20px;
 }
 
-.score {
+.score,
+.highscore {
   font-size: 1.4rem;
   color: #fff;
   text-transform: uppercase;
