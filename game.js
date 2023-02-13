@@ -110,8 +110,6 @@ function moveBall(ball, col, row, onAnimationFinished) {
     //do animation
     animationIsPlaying = true;
 
-    // ball.getTop() < top ? dTop = ball.getTop() + delta : dTop = ball.getTop() - delta
-    // finalTop = dTop > top ?
     let finalTop;
     let finalLeft;
 
@@ -135,6 +133,7 @@ function moveBall(ball, col, row, onAnimationFinished) {
     repeat();
   } else {
     animationIsPlaying = false;
+    //ball.setPos(col,row);
     // call next actions after animation
     onAnimationFinished();
   }
@@ -172,18 +171,21 @@ function addNewBalls() {
     const ball = new Ball();
     ball.setPos(i, 0);
     grid[i].unshift(ball);
-    liftBalls();
   }
   console.log(grid);
 }
 
-function liftBalls() {
-  for (let col = 0; col < grid.length; col++) {
+function liftBalls(onLiftingEnds) {
+  for (let col = 0; col < colN; col++) {
     for (let row = 0; row < grid[col].length; row++) {
-      // animation!!!!!
-      grid[col][row].setPos(col, row);
+      //animation!!!!!
+      // moveBall(grid[col][row], col, row + 1, () => {
+      //   grid[col][row].setPos(col, row + 1);
+      // });
+      grid[col][row].setPos(col, row + 1);
     }
   }
+  onLiftingEnds();
 }
 
 updateScore(score);
@@ -267,9 +269,11 @@ function grabBall(ball, pointerX, pointerY) {
         if (!checkMatch(grid[col])) {
           if (!gameOver()) {
             setTimeout(() => {
-              addNewBalls();
-              grid.forEach(col => checkMatch(col));
-            }, 300);
+              liftBalls(() => {
+                addNewBalls();
+                grid.forEach(col => checkMatch(col));
+              });
+            }, 600);
           }
         }
       }
@@ -301,12 +305,17 @@ function checkMatch(col) {
     score += achievedPoints;
     updateScore(score);
 
-    // merge two balls
-    col.at(-2).updatePoints(achievedPoints);
-    col.pop().html.remove();
+    setTimeout(() => {
+      let ball = col.pop();
+      moveBall(ball, ball.col, ball.row - 1, () => {
+        // merge two balls
+        col.at(-1).updatePoints(achievedPoints);
+        ball.html.remove();
 
-    // check match again
-    checkMatch(col);
+        // check match again
+        checkMatch(col);
+      });
+    }, 300);
     return true;
   } else {
     return false;
