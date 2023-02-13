@@ -133,7 +133,6 @@ function moveBall(ball, col, row, onAnimationFinished) {
     repeat();
   } else {
     animationIsPlaying = false;
-    //ball.setPos(col,row);
     // call next actions after animation
     onAnimationFinished();
   }
@@ -205,7 +204,11 @@ board.onpointerdown = function (e) {
   if (grid[col][row] && row === grid[col].length - 1) {
     let ball = grid[col][row];
     // check if pointer down exactly on the ball than grab the ball
-    if (pointerX > ball.getX() && pointerY > ball.getY()) {
+    if (
+      pointerX > ball.getX() &&
+      pointerY > ball.getY() &&
+      !animationIsPlaying
+    ) {
       grabBall(ball, pointerX, pointerY);
       showAims(col);
     }
@@ -310,12 +313,14 @@ function checkMatch(col) {
       moveBall(ball, ball.col, ball.row - 1, () => {
         // merge two balls
         col.at(-1).updatePoints(achievedPoints);
-        ball.html.remove();
-
+        ball.html.classList.add('ball-merged');
         // check match again
         checkMatch(col);
       });
-    }, 300);
+    }, 50);
+
+    // remove merged balls from DOM
+    document.querySelectorAll('ball-merged').forEach(ball => ball.remove());
     return true;
   } else {
     return false;
@@ -326,6 +331,8 @@ function gameOver() {
   if (grid.find(col => col.length === rowN)) {
     // show modal
     modal.classList.remove('hidden');
+    document.querySelector('.game-over p').classList.add('game-over-anim');
+    document.querySelector('.ui').style.zIndex = 3;
     return true;
   } else {
     return false;

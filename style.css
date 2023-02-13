@@ -79,6 +79,22 @@ body {
   animation: showBall 0.3s linear 1 forwards;
 }
 
+.ball-merged {
+  animation: mergeBall 300ms ease 1 forwards;
+}
+
+@keyframes mergeBall {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
 @keyframes showBall {
   0% {
     opacity: 0;
@@ -143,6 +159,27 @@ body {
   color: #fff;
   font-size: 2rem;
   text-transform: uppercase;
+  opacity: 0;
+}
+
+.game-over-anim {
+  animation: gameOver ease-in 600ms 1 forwards;
+}
+
+@keyframes gameOver {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+
+  80% {
+    transform: scale(1.5);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .hidden {
