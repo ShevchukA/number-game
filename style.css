@@ -37,6 +37,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  user-select: none;
 }
 
 .ui {
@@ -74,7 +75,6 @@ body {
   background-color: #fff;
   font-weight: 800;
   color: #55c57a;
-  user-select: none;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
   position: absolute;
   animation: showBall 0.3s linear 1 forwards;
@@ -150,6 +150,7 @@ body {
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   backdrop-filter: blur(3px);
@@ -160,7 +161,7 @@ body {
   color: #fff;
   font-size: 2rem;
   text-transform: uppercase;
-  opacity: 0;
+  opacity: 1;
 }
 
 .game-over-anim {
@@ -180,6 +181,30 @@ body {
   100% {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+.btn-restart {
+  border: none;
+  background: none;
+  color: #fff;
+  font-size: 45px;
+  user-select: none;
+  position: absolute;
+  transform: translateX(-50%);
+  bottom: 150px;
+  left: 50%;
+  opacity: 0;
+  animation: showRestartBtn 600ms ease-in 600ms 1 forwards;
+}
+
+@keyframes showRestartBtn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 100%;
   }
 }
 

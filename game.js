@@ -2,8 +2,10 @@ const modal = document.querySelector('.game-over');
 const scoreField = document.querySelector('.score');
 const highScoreField = document.querySelector('.highscore');
 const board = document.querySelector('.board');
+const restartBtn = document.querySelector('.btn-restart');
+const gameOverMessage = document.querySelector('.game-over p');
+const ui = document.querySelector('.ui');
 
-const grid = [[], [], [], [], []];
 const ballSize = 50;
 const cell = 50;
 const gap = 20;
@@ -12,10 +14,11 @@ const rowN = 7;
 const delta = 10;
 const key = 'highscore';
 
+let grid = [[], [], [], [], []];
+let animationIsPlaying = false;
 let pointsLimit = 3;
 let score = 0;
 let highscore = localStorage.getItem(key) ?? 0;
-highScoreField.innerText = `highscore: ${highscore}`;
 // reset highscore
 // localStorage.setItem(key, 0);
 
@@ -27,6 +30,29 @@ const boardX = board.getBoundingClientRect().left;
 const boardY = board.getBoundingClientRect().top;
 const boardW = board.clientWidth;
 const boardH = board.clientHeight;
+
+function init() {
+  // remove html elements from DOM
+  while (board.hasChildNodes()) {
+    board.removeChild(board.lastChild);
+  }
+  //set default values
+  grid = [[], [], [], [], []];
+  animationIsPlaying = false;
+  pointsLimit = 3;
+  score = 0;
+  highscore = localStorage.getItem(key) ?? 0;
+  highScoreField.innerText = `highscore: ${highscore}`;
+  // hide gameover screen
+  modal.classList.add('hidden');
+  gameOverMessage.classList.remove('game-over-anim');
+  // start new game
+  updateScore(score);
+  updateHighscore();
+  addNewBalls();
+}
+
+init();
 
 function getLeftFromCol(col) {
   return gap + col * cell + col * gap;
@@ -75,9 +101,6 @@ function Ball() {
     let left = getLeftFromCol(col);
     let top = getTopFromRow(row);
     this.setLeftTop(left, top);
-    // задать позицию в анимации
-    // start animation
-    //this.animate(left, top);
   };
 
   // set coordinates relative to the board
@@ -103,7 +126,23 @@ function Ball() {
   }
 }
 
-let animationIsPlaying = false;
+function addNewBalls() {
+  for (let i = 0; i < colN; i++) {
+    const ball = new Ball();
+    ball.setPos(i, 0);
+    grid[i].unshift(ball);
+  }
+  console.log(grid);
+}
+
+function liftBalls(onLiftingEnds) {
+  for (let col = 0; col < colN; col++) {
+    for (let row = 0; row < grid[col].length; row++) {
+      grid[col][row].setPos(col, row + 1);
+    }
+  }
+  onLiftingEnds();
+}
 
 function moveBall(ball, col, row, onAnimationFinished) {
   const left = getLeftFromCol(col);
@@ -135,7 +174,9 @@ function moveBall(ball, col, row, onAnimationFinished) {
       finalLeft = ball.getLeft() - delta < left ? left : ball.getLeft() - delta;
     }
 
+    // move ball on delta distance
     ball.setLeftTop(finalLeft, finalTop);
+    // repeat untill ball will get the target
     repeat();
   } else {
     animationIsPlaying = false;
@@ -144,29 +185,6 @@ function moveBall(ball, col, row, onAnimationFinished) {
   }
 }
 
-/*
-function Aim() {
-  this.col = 0;
-  this.row = 0;
-  this.html = createHtmlElement();
-
-  function createHtmlElement() {
-    const aim = document.createElement('div');
-    aim.classList.add('aim');
-    aim.style.width = `${ballSize}px`;
-    aim.style.height = `${ballSize}px`;
-    board.appendChild(aim);
-    return aim;
-  }
-
-  this.setPos = function (col, row) {
-    this.html.style.left = `${gap + col * cell + col * gap}px`;
-    this.html.style.top = `${
-      gap + (rowN - row - 1) * cell + (rowN - row - 1) * gap
-    }px`;
-  };
-}
-*/
 function updateScore(score) {
   scoreField.innerText = `score:  ${score}`;
 }
@@ -178,32 +196,6 @@ function updateHighscore() {
     highScoreField.innerText = `highscore: ${highscore}`;
   }
 }
-
-function addNewBalls() {
-  for (let i = 0; i < colN; i++) {
-    const ball = new Ball();
-    ball.setPos(i, 0);
-    grid[i].unshift(ball);
-  }
-  console.log(grid);
-}
-
-function liftBalls(onLiftingEnds) {
-  for (let col = 0; col < colN; col++) {
-    for (let row = 0; row < grid[col].length; row++) {
-      //animation!!!!!
-      // moveBall(grid[col][row], col, row + 1, () => {
-      //   grid[col][row].setPos(col, row + 1);
-      // });
-      grid[col][row].setPos(col, row + 1);
-    }
-  }
-  onLiftingEnds();
-}
-
-updateScore(score);
-updateHighscore();
-addNewBalls();
 
 // Prevent browser default drag'n'drop behaviour
 board.ondragstart = function () {
@@ -342,20 +334,6 @@ function checkMatch(col) {
   }
 }
 
-function gameOver() {
-  // if one of columns is full than gameover
-  if (grid.find(col => col.length === rowN)) {
-    updateHighscore();
-    // show modal
-    modal.classList.remove('hidden');
-    document.querySelector('.game-over p').classList.add('game-over-anim');
-    document.querySelector('.ui').style.zIndex = 3;
-    return true;
-  } else {
-    return false;
-  }
-}
-
 function addAim(col, row) {
   const aim = document.createElement('div');
   aim.classList.add('aim');
@@ -380,4 +358,21 @@ function hideAims() {
   // remove all aims from the board
   const aims = document.querySelectorAll('.aim');
   aims.forEach(aim => aim.remove());
+}
+
+function gameOver() {
+  // if one of columns is full than gameover
+  if (grid.find(col => col.length === rowN)) {
+    updateHighscore();
+    // show modal
+    modal.classList.remove('hidden');
+    gameOverMessage.classList.add('game-over-anim');
+    ui.style.zIndex = 3;
+    restartBtn.onclick = function () {
+      init();
+    };
+    return true;
+  } else {
+    return false;
+  }
 }
