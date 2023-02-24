@@ -11,7 +11,7 @@ const cell = 50;
 const gap = 20;
 const colN = 5;
 const rowN = 7;
-const delta = 10;
+// const delta = 10;
 const key = 'highscore';
 
 let grid = [[], [], [], [], []];
@@ -30,6 +30,27 @@ const boardX = board.getBoundingClientRect().left;
 const boardY = board.getBoundingClientRect().top;
 const boardW = board.clientWidth;
 const boardH = board.clientHeight;
+
+// !!!!!!
+
+let delta = 10;
+let fps = 0;
+let lastTime = 0;
+
+function setDelta() {
+  let currentTime = performance.now();
+  let deltaTime = (currentTime - lastTime) / 1000;
+  fps = 1 / deltaTime;
+  lastTime = currentTime;
+  delta = 600 / fps; // 60fps * 10px - required speed
+  console.log(delta, fps);
+  requestAnimationFrame(setDelta);
+}
+
+// call setDelta every requestAnimationFrame
+// window.requestAnimationFrame(setDelta);
+
+// !!!!!!
 
 function init() {
   // remove html elements from DOM
@@ -50,6 +71,8 @@ function init() {
   updateScore(score);
   updateHighscore();
   addNewBalls();
+  // call setDelta every requestAnimationFrame
+  requestAnimationFrame(setDelta);
 }
 
 init();
@@ -155,27 +178,27 @@ function moveBall(ball, col, row, onAnimationFinished) {
     //do animation
     animationIsPlaying = true;
 
-    let finalTop;
-    let finalLeft;
+    let deltaTop;
+    let deltaLeft;
 
     if (ball.getTop() < top) {
       // move down
-      finalTop = ball.getTop() + delta > top ? top : ball.getTop() + delta;
+      deltaTop = ball.getTop() + delta > top ? top : ball.getTop() + delta;
     } else {
       // move up
-      finalTop = ball.getTop() - delta < top ? top : ball.getTop() - delta;
+      deltaTop = ball.getTop() - delta < top ? top : ball.getTop() - delta;
     }
 
     if (ball.getLeft() < left) {
       //move right
-      finalLeft = ball.getLeft() + delta > left ? left : ball.getLeft() + delta;
+      deltaLeft = ball.getLeft() + delta > left ? left : ball.getLeft() + delta;
     } else {
       // move left
-      finalLeft = ball.getLeft() - delta < left ? left : ball.getLeft() - delta;
+      deltaLeft = ball.getLeft() - delta < left ? left : ball.getLeft() - delta;
     }
 
     // move ball on delta distance
-    ball.setLeftTop(finalLeft, finalTop);
+    ball.setLeftTop(deltaLeft, deltaTop);
     // repeat untill ball will get the target
     repeat();
   } else {
