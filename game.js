@@ -48,6 +48,7 @@ function setDelta() {
   requestAnimationFrame(setDelta);
 }
 
+// change color theme of game when player achives breakpoints
 const colorTheme = [
   { darkColor: '#28b485', lightColor: '#7ed56f' }, // green
   { darkColor: '#ff7730', lightColor: '#ffb900' }, // orange
@@ -55,7 +56,7 @@ const colorTheme = [
   { darkColor: '#bf2e34', lightColor: '#753682' }, // pink
 ];
 
-const colorBrekpoints = [256, 512, 1024];
+let colorBrekpoints = [256, 512, 1024];
 let currentColorTheme = 0;
 
 function setColorTheme(colorN) {
@@ -269,6 +270,9 @@ board.onpointerdown = function (e) {
 };
 
 function grabBall(ball, pointerX, pointerY) {
+  // add some shadow to the grabbed ball
+  ball.html.classList.add('ball-grabbed');
+
   // define shift between pointer and ball coordinates
   let shiftX = ball.getX() - pointerX;
   let shiftY = ball.getY() - pointerY;
@@ -299,12 +303,15 @@ function grabBall(ball, pointerX, pointerY) {
       hideAims();
       // return to previous position
       ball.setPos(ball.col, ball.row);
+      ball.html.classList.remove('ball-grabbed');
     }
   }
 
   board.onpointerup = function (e) {
     board.removeEventListener('pointermove', onPointerMoveBall);
     hideAims();
+    ball.html.classList.remove('ball-grabbed');
+
     // define cell under the pointer
     let { col, row } = defineCoordinates(e);
 
