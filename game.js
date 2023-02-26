@@ -61,12 +61,12 @@ requestAnimationFrame(setDelta);
 // change color theme of game when player achives breakpoints
 const colorTheme = [
   { darkColor: '#28b485', lightColor: '#7ed56f' }, // green
+  { darkColor: '#5643fa', lightColor: '#2998ff' }, // blue
   { darkColor: '#ff7730', lightColor: '#ffb900' }, // orange
   { darkColor: '#bf2e34', lightColor: '#753682' }, // pink
-  { darkColor: '#5643fa', lightColor: '#2998ff' }, // blue
 ];
 
-let colorBrekpoints = [256, 512, 1024];
+let colorBrekpoints = [128, 256, 512, 1024];
 let currentColorTheme = 0;
 
 function setColorTheme(colorN) {
@@ -89,7 +89,7 @@ function init() {
     board.removeChild(board.lastChild);
   }
   //set default values
-  colorBrekpoints = [256, 512, 1024];
+  colorBrekpoints = [128, 256, 512, 1024];
   currentColorTheme = 0;
   grid = [[], [], [], [], []];
   animationIsPlaying = false;
@@ -388,7 +388,7 @@ function checkMatch(col) {
         // check match again
         checkMatch(col);
       });
-    }, 300);
+    }, 150);
 
     // remove merged balls from DOM
     document.querySelectorAll('ball-merged').forEach(ball => ball.remove());
