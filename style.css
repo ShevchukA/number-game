@@ -84,6 +84,10 @@ body {
   animation: mergeBall 300ms ease 1 forwards;
 }
 
+.ball-grabbed {
+  box-shadow: none;
+}
+
 @keyframes mergeBall {
   0% {
     transform: scale(1);
@@ -106,9 +110,11 @@ body {
   }
 }
 
-.ball:hover {
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
-  z-index: 1;
+@media (hover:hover) {
+  .ball:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    z-index: 1;
+  }
 }
 
 .aim {
