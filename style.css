@@ -174,6 +174,7 @@ body {
   font-size: 2rem;
   text-transform: uppercase;
   opacity: 1;
+  margin-bottom: 15px;
 }
 
 .game-over-anim {
@@ -200,12 +201,9 @@ body {
   border: none;
   background: none;
   color: #fff;
-  font-size: 45px;
+  font-size: 50px;
   user-select: none;
-  position: absolute;
-  transform: translateX(-50%);
-  bottom: 150px;
-  left: 50%;
+  margin-top: 15px;
   opacity: 0;
   animation: showRestartBtn 600ms ease-in 600ms 1 forwards;
 }
