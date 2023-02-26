@@ -51,16 +51,19 @@ function setDelta() {
     accumulator.reduce((sum, fps) => (sum += fps), 0) / accumulator.length;
 
   delta = animationSpeed / averageFPS;
-  // console.log(averageFPS);
+  console.log(delta);
   requestAnimationFrame(setDelta);
 }
+
+// call setDelta every requestAnimationFrame
+requestAnimationFrame(setDelta);
 
 // change color theme of game when player achives breakpoints
 const colorTheme = [
   { darkColor: '#28b485', lightColor: '#7ed56f' }, // green
   { darkColor: '#ff7730', lightColor: '#ffb900' }, // orange
-  { darkColor: '#5643fa', lightColor: '#2998ff' }, // blue
   { darkColor: '#bf2e34', lightColor: '#753682' }, // pink
+  { darkColor: '#5643fa', lightColor: '#2998ff' }, // blue
 ];
 
 let colorBrekpoints = [256, 512, 1024];
@@ -102,8 +105,6 @@ function init() {
   updateScore(score);
   updateHighscore();
   addNewBalls();
-  // call setDelta every requestAnimationFrame
-  requestAnimationFrame(setDelta);
 }
 
 init();
