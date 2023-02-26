@@ -7,6 +7,11 @@ Dark green: #28b485
 
 */
 
+:root {
+  --color-dark: #28b485;
+  --color-light: #7ed56f;
+}
+
 
 * {
   margin: 0;
@@ -23,11 +28,12 @@ body {
 }
 
 body {
-  background-image: linear-gradient(to top, rgb(126, 213, 111), rgb(40, 180, 131));
+  background-image: linear-gradient(to top, var(--color-light), var(--color-dark));
   background-size: cover;
   background-repeat: no-repeat;
   font-family: 'Lato', sans-serif;
   overflow: hidden;
+  user-select: none;
 }
 
 .main {
@@ -74,7 +80,7 @@ body {
   border-radius: 50%;
   background-color: #fff;
   font-weight: 800;
-  color: #55c57a;
+  color: var(--color-dark);
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
   position: absolute;
   animation: showBall 0.3s linear 1 forwards;
@@ -85,6 +91,7 @@ body {
 }
 
 .ball-grabbed {
+  z-index: 10;
   box-shadow: none;
 }
 
@@ -113,7 +120,6 @@ body {
 @media (hover:hover) {
   .ball:hover {
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
-    z-index: 1;
   }
 }
 

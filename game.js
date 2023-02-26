@@ -5,6 +5,7 @@ const board = document.querySelector('.board');
 const restartBtn = document.querySelector('.btn-restart');
 const gameOverMessage = document.querySelector('.game-over p');
 const ui = document.querySelector('.ui');
+const root = document.querySelector(':root');
 
 const ballSize = 50;
 const cell = 50;
@@ -47,12 +48,38 @@ function setDelta() {
   requestAnimationFrame(setDelta);
 }
 
+const colorTheme = [
+  { darkColor: '#28b485', lightColor: '#7ed56f' }, // green
+  { darkColor: '#ff7730', lightColor: '#ffb900' }, // orange
+  { darkColor: '#5643fa', lightColor: '#2998ff' }, // blue
+  { darkColor: '#bf2e34', lightColor: '#753682' }, // pink
+];
+
+const colorBrekpoints = [256, 512, 1024];
+let currentColorTheme = 0;
+
+function setColorTheme(colorN) {
+  root.style.setProperty('--color-dark', colorTheme[colorN].darkColor);
+  root.style.setProperty('--color-light', colorTheme[colorN].lightColor);
+}
+
+function changeColorTheme(points) {
+  if (points === colorBrekpoints[0]) {
+    currentColorTheme++;
+    setColorTheme(currentColorTheme);
+    colorBrekpoints.shift();
+    console.log(colorBrekpoints);
+  }
+}
+
 function init() {
   // remove html elements from DOM
   while (board.hasChildNodes()) {
     board.removeChild(board.lastChild);
   }
   //set default values
+  colorBrekpoints = [256, 512, 1024];
+  currentColorTheme = 0;
   grid = [[], [], [], [], []];
   animationIsPlaying = false;
   pointsLimit = 3;
@@ -63,6 +90,7 @@ function init() {
   modal.classList.add('hidden');
   gameOverMessage.classList.remove('game-over-anim');
   // start new game
+  setColorTheme(currentColorTheme);
   updateScore(score);
   updateHighscore();
   addNewBalls();
@@ -339,6 +367,8 @@ function checkMatch(col) {
         // merge two balls
         col.at(-1).updatePoints(achievedPoints);
         ball.html.classList.add('ball-merged');
+        // change color theme if necessary
+        changeColorTheme(achievedPoints);
         // check match again
         checkMatch(col);
       });
