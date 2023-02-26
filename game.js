@@ -35,16 +35,23 @@ const boardH = board.clientHeight;
 // set animation speed independent from screen fps;
 let delta = 0;
 let fps = 0;
+let accumulator = [];
 let lastTime = 0;
 const animationSpeed = 600; // 60fps * 10px
 
 function setDelta() {
   let currentTime = performance.now();
   let deltaTime = (currentTime - lastTime) / 1000; // delta time in seconds
-  fps = 1 / deltaTime;
   lastTime = currentTime;
-  delta = animationSpeed / fps;
-  // console.log(delta, fps);
+  fps = 1 / deltaTime;
+  accumulator.push(fps);
+  // define average fps of 10 last values
+  if (accumulator.length > 10) accumulator.shift();
+  let averageFPS =
+    accumulator.reduce((sum, fps) => (sum += fps), 0) / accumulator.length;
+
+  delta = animationSpeed / averageFPS;
+  // console.log(averageFPS);
   requestAnimationFrame(setDelta);
 }
 
@@ -69,7 +76,7 @@ function changeColorTheme(points) {
     currentColorTheme++;
     setColorTheme(currentColorTheme);
     colorBrekpoints.shift();
-    console.log(colorBrekpoints);
+    // console.log(colorBrekpoints);
   }
 }
 
@@ -179,7 +186,7 @@ function addNewBalls() {
     ball.setPos(i, 0);
     grid[i].unshift(ball);
   }
-  console.log(grid);
+  // console.log(grid);
 }
 
 function liftBalls(onLiftingEnds) {
@@ -276,7 +283,7 @@ function grabBall(ball, pointerX, pointerY) {
   // define shift between pointer and ball coordinates
   let shiftX = ball.getX() - pointerX;
   let shiftY = ball.getY() - pointerY;
-  console.log(ball);
+  // console.log(ball);
 
   board.addEventListener('pointermove', onPointerMoveBall);
 
@@ -348,7 +355,7 @@ function grabBall(ball, pointerX, pointerY) {
       });
     }
 
-    console.log(grid);
+    // console.log(grid);
     this.onpointerup = null;
   };
 }
@@ -427,7 +434,7 @@ function checkGameOver() {
 }
 
 function checkCanPlay() {
-  console.log('GAME OVER!!!!!');
+  // if there are no empty cells then game over
   if (!grid.find(col => col.length < rowN)) gameOver();
 }
 
