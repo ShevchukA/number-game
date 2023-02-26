@@ -31,26 +31,21 @@ const boardY = board.getBoundingClientRect().top;
 const boardW = board.clientWidth;
 const boardH = board.clientHeight;
 
-// !!!!!!
-
-let delta = 10;
+// set animation speed independent from screen fps;
+let delta = 0;
 let fps = 0;
 let lastTime = 0;
+const animationSpeed = 600; // 60fps * 10px
 
 function setDelta() {
   let currentTime = performance.now();
-  let deltaTime = (currentTime - lastTime) / 1000;
+  let deltaTime = (currentTime - lastTime) / 1000; // delta time in seconds
   fps = 1 / deltaTime;
   lastTime = currentTime;
-  delta = 600 / fps; // 60fps * 10px - required speed
-  console.log(delta, fps);
+  delta = animationSpeed / fps;
+  // console.log(delta, fps);
   requestAnimationFrame(setDelta);
 }
-
-// call setDelta every requestAnimationFrame
-// window.requestAnimationFrame(setDelta);
-
-// !!!!!!
 
 function init() {
   // remove html elements from DOM
@@ -347,7 +342,7 @@ function checkMatch(col) {
         // check match again
         checkMatch(col);
       });
-    }, 50);
+    }, 300);
 
     // remove merged balls from DOM
     document.querySelectorAll('ball-merged').forEach(ball => ball.remove());
