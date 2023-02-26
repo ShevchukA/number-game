@@ -330,11 +330,12 @@ function grabBall(ball, pointerX, pointerY) {
         // check match between 2 last balls in column after gamer turn
         // if no match than add new row and check for matching again
         if (!checkMatch(grid[col])) {
-          if (!gameOver()) {
+          if (!checkGameOver()) {
             setTimeout(() => {
               liftBalls(() => {
                 addNewBalls();
                 grid.forEach(col => checkMatch(col));
+                checkCanPlay();
               });
             }, 600);
           }
@@ -415,19 +416,28 @@ function hideAims() {
   aims.forEach(aim => aim.remove());
 }
 
-function gameOver() {
+function checkGameOver() {
   // if one of columns is full than gameover
   if (grid.find(col => col.length === rowN)) {
-    updateHighscore();
-    // show modal
-    modal.classList.remove('hidden');
-    gameOverMessage.classList.add('game-over-anim');
-    ui.style.zIndex = 3;
-    restartBtn.onclick = function () {
-      init();
-    };
+    gameOver();
     return true;
   } else {
     return false;
   }
+}
+
+function checkCanPlay() {
+  console.log('GAME OVER!!!!!');
+  if (!grid.find(col => col.length < rowN)) gameOver();
+}
+
+function gameOver() {
+  updateHighscore();
+  // show modal
+  modal.classList.remove('hidden');
+  gameOverMessage.classList.add('game-over-anim');
+  ui.style.zIndex = 3;
+  restartBtn.onclick = function () {
+    init();
+  };
 }
