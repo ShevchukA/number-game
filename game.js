@@ -51,7 +51,7 @@ function setDelta() {
     accumulator.reduce((sum, fps) => (sum += fps), 0) / accumulator.length;
 
   delta = animationSpeed / averageFPS;
-  console.log(delta);
+  // console.log(delta);
   requestAnimationFrame(setDelta);
 }
 
