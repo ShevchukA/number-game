@@ -1,7 +1,11 @@
-const modal = document.querySelector('.game-over');
+const startScreen = document.querySelector('.start');
+const mainScreen = document.querySelector('.main');
+const gameOverScreen = document.querySelector('.game-over');
 const scoreField = document.querySelector('.score');
 const highScoreField = document.querySelector('.highscore');
+const startHighScore = document.querySelector('.h-score');
 const board = document.querySelector('.board');
+const startBtn = document.querySelector('.btn-start');
 const restartBtn = document.querySelector('.btn-restart');
 const gameOverMessage = document.querySelector('.game-over p');
 const ui = document.querySelector('.ui');
@@ -12,7 +16,6 @@ const cell = 50;
 const gap = 20;
 const colN = 5;
 const rowN = 7;
-// const delta = 10;
 const key = 'highscore';
 
 let grid = [[], [], [], [], []];
@@ -21,16 +24,13 @@ let pointsLimit = 3;
 let score = 0;
 let highscore = localStorage.getItem(key) ?? 0;
 // reset highscore
-// localStorage.setItem(key, 0);
+localStorage.setItem(key, 0);
 
-// set gamefield sizes;
-board.style.height = `${rowN * cell + (rowN + 1) * gap}px`;
-board.style.width = `${colN * cell + (colN + 1) * gap}px`;
-
-const boardX = board.getBoundingClientRect().left;
-const boardY = board.getBoundingClientRect().top;
-const boardW = board.clientWidth;
-const boardH = board.clientHeight;
+// show highscore on the start screen if it more then 0
+if (highscore > 0) {
+  startHighScore.innerText = `best score: ${highscore}`;
+  startHighScore.classList.remove('hidden');
+}
 
 // set animation speed independent from screen fps;
 let delta = 0;
@@ -72,6 +72,7 @@ let currentColorTheme = 0;
 function setColorTheme(colorN) {
   root.style.setProperty('--color-dark', colorTheme[colorN].darkColor);
   root.style.setProperty('--color-light', colorTheme[colorN].lightColor);
+  // document.body.style.backgroundImage = `linear-gradient(to top, ${colorTheme[colorN].lightColor}, ${colorTheme[colorN].darkColor})`;
 }
 
 function changeColorTheme(points) {
@@ -83,11 +84,35 @@ function changeColorTheme(points) {
   }
 }
 
+// start game
+startBtn.addEventListener('click', init);
+
+let boardX, boardY, boardW, boardH;
+
 function init() {
+  startScreen.classList.add('hidden');
+  mainScreen.classList.remove('hidden');
+
+  // set gamefield sizes;
+  board.style.height = `${rowN * cell + (rowN + 1) * gap}px`;
+  board.style.width = `${colN * cell + (colN + 1) * gap}px`;
+
+  boardX = board.getBoundingClientRect().left;
+  boardY = board.getBoundingClientRect().top;
+  boardW = board.clientWidth;
+  boardH = board.clientHeight;
+
+  // start game
+  start();
+}
+
+function start() {
   // remove html elements from DOM
-  while (board.hasChildNodes()) {
-    board.removeChild(board.lastChild);
-  }
+  // while (board.hasChildNodes()) {
+  //   board.removeChild(board.lastChild);
+  // }
+  board.innerHTML = '';
+
   //set default values
   colorBrekpoints = [128, 256, 512, 1024];
   currentColorTheme = 0;
@@ -98,7 +123,7 @@ function init() {
   highscore = localStorage.getItem(key) ?? 0;
   highScoreField.innerText = `highscore: ${highscore}`;
   // hide gameover screen
-  modal.classList.add('hidden');
+  gameOverScreen.classList.add('hidden');
   gameOverMessage.classList.remove('game-over-anim');
   // start new game
   setColorTheme(currentColorTheme);
@@ -106,8 +131,6 @@ function init() {
   updateHighscore();
   addNewBalls();
 }
-
-init();
 
 function getLeftFromCol(col) {
   return gap + col * cell + col * gap;
@@ -260,7 +283,7 @@ board.ondragstart = function () {
 board.onpointerdown = function (e) {
   // define cell under the pointer
   let { pointerX, pointerY, col, row } = defineCoordinates(e);
-  console.log(col, row);
+  // console.log(col, row);
 
   // if top cell in column contain the ball then can move ball
   if (grid[col][row] && row === grid[col].length - 1) {
@@ -366,6 +389,7 @@ function defineCoordinates(e) {
   let pointerY = e.clientY;
   let col = Math.trunc((pointerX - boardX) / (gap + cell));
   let row = Math.trunc(rowN - (pointerY - boardY) / (gap + cell));
+  console.log(pointerX, pointerY);
   return { pointerX, pointerY, col, row };
 }
 
@@ -441,11 +465,11 @@ function checkCanPlay() {
 
 function gameOver() {
   updateHighscore();
-  // show modal
-  modal.classList.remove('hidden');
+  // show gameOverScreen
+  gameOverScreen.classList.remove('hidden');
   gameOverMessage.classList.add('game-over-anim');
   ui.style.zIndex = 3;
   restartBtn.onclick = function () {
-    init();
+    start();
   };
 }
