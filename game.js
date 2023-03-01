@@ -24,7 +24,7 @@ let pointsLimit = 3;
 let score = 0;
 let highscore = localStorage.getItem(key) ?? 0;
 // reset highscore
-localStorage.setItem(key, 0);
+// localStorage.setItem(key, 0);
 
 // show highscore on the start screen if it more then 0
 if (highscore > 0) {
@@ -389,7 +389,7 @@ function defineCoordinates(e) {
   let pointerY = e.clientY;
   let col = Math.trunc((pointerX - boardX) / (gap + cell));
   let row = Math.trunc(rowN - (pointerY - boardY) / (gap + cell));
-  console.log(pointerX, pointerY);
+  // console.log(pointerX, pointerY);
   return { pointerX, pointerY, col, row };
 }
 
