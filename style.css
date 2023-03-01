@@ -28,19 +28,12 @@ body {
 
 body {
   background-image: linear-gradient(to top, var(--color-light), var(--color-dark));
-  /* background-image: linear-gradient(to top, #7ed56f, #28b485); */
   background-size: cover;
   background-repeat: no-repeat;
   font-family: 'Lato', sans-serif;
   overflow: hidden;
   user-select: none;
-  transition: background-image 4s;
-  /* -webkit-transition: all 4s; */
 }
-
-/* body:hover {
-  background-image: linear-gradient(to top, red, green);
-} */
 
 .start,
 .main {
@@ -72,7 +65,7 @@ body {
   animation: show 600ms ease-in 600ms 1 forwards;
 }
 
-.start .h-score {
+.start .bestscore {
   font-size: 1.2rem;
   color: #fff;
   text-transform: uppercase;
@@ -91,7 +84,7 @@ body {
 
 .score,
 .highscore {
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   color: #fff;
   text-transform: uppercase;
   margin: 0 10px;
@@ -231,17 +224,6 @@ body {
     transform: scale(1);
   }
 }
-
-/* .btn-restart {
-  border: none;
-  background: none;
-  color: #fff;
-  font-size: 50px;
-  user-select: none;
-  margin-top: 15px;
-  opacity: 0;
-  animation: show 600ms ease-in 600ms 1 forwards;
-} */
 
 @keyframes show {
   0% {

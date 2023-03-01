@@ -3,7 +3,7 @@ const mainScreen = document.querySelector('.main');
 const gameOverScreen = document.querySelector('.game-over');
 const scoreField = document.querySelector('.score');
 const highScoreField = document.querySelector('.highscore');
-const startHighScore = document.querySelector('.h-score');
+const startHighScore = document.querySelector('.bestscore');
 const board = document.querySelector('.board');
 const startBtn = document.querySelector('.btn-start');
 const restartBtn = document.querySelector('.btn-restart');
@@ -72,7 +72,6 @@ let currentColorTheme = 0;
 function setColorTheme(colorN) {
   root.style.setProperty('--color-dark', colorTheme[colorN].darkColor);
   root.style.setProperty('--color-light', colorTheme[colorN].lightColor);
-  // document.body.style.backgroundImage = `linear-gradient(to top, ${colorTheme[colorN].lightColor}, ${colorTheme[colorN].darkColor})`;
 }
 
 function changeColorTheme(points) {
