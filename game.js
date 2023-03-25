@@ -1,16 +1,3 @@
-// const startScreen = document.querySelector('.start');
-// const mainScreen = document.querySelector('.main');
-// const gameOverScreen = document.querySelector('.game-over');
-// const scoreField = document.querySelector('.score');
-// const highScoreField = document.querySelector('.highscore');
-// const startHighScore = document.querySelector('.bestscore');
-// const board = document.querySelector('.board');
-// const startBtn = document.querySelector('.btn-start');
-// const restartBtn = document.querySelector('.btn-restart');
-// const gameOverMessage = document.querySelector('.game-over p');
-// const ui = document.querySelector('.ui');
-// const root = document.querySelector(':root');
-
 // import DOM objects
 import {
   startScreen,
@@ -26,6 +13,7 @@ import {
   ui,
 } from './dom.js';
 
+// import dimentions for game objects
 import {
   ballSize,
   cell,
@@ -41,13 +29,15 @@ import {
   getTopFromRow,
 } from './dimentions.js';
 
+// import color control functions
 import { changeColorTheme, refreshColors } from './colors.js';
 
+// import ball constructor
 import Ball from './ball.js';
 
 // import delta value for smooth animation independent from fps
 import { delta, setDelta } from './animation.js';
-// set animation speed independent from screen fps;
+
 // call setDelta every requestAnimationFrame
 requestAnimationFrame(setDelta);
 
@@ -241,46 +231,48 @@ function grabBall(ball, pointerX, pointerY) {
     board.removeEventListener('pointermove', onPointerMoveBall);
     hideAims();
     ball.html.classList.remove('ball-grabbed');
-
-    // define cell under the pointer
-    let { col, row } = defineCoordinates(e);
-
-    // if gamer places selected ball in another column above top ball
-    if (ball.col != col && row >= grid[col].length) {
-      // animate drop movement
-      moveBall(ball, col, grid[col].length, onDropFinish);
-      // callback events after animation
-      function onDropFinish() {
-        // delete ball from previous column
-        grid[ball.col].pop(ball);
-        // set new position of the ball
-        ball.setPos(col, grid[col].length);
-        // add to selected column
-        grid[col].push(ball);
-        // check match between 2 last balls in column after gamer turn
-        // if no match than add new row and check for matching again
-        if (!checkMatch(grid[col])) {
-          if (!checkGameOver()) {
-            setTimeout(() => {
-              liftBalls(() => {
-                addNewBalls();
-                grid.forEach(col => checkMatch(col));
-                checkCanPlay();
-              });
-            }, 600);
-          }
-        }
-      }
-    } else {
-      // return to previous position
-      moveBall(ball, ball.col, ball.row, () => {
-        ball.setPos(ball.col, ball.row);
-      });
-    }
-
-    // console.log(grid);
+    dropBall(ball, e);
+    //console.log(grid);
     this.onpointerup = null;
   };
+}
+
+function dropBall(ball, e) {
+  // define cell under the pointer
+  let { col, row } = defineCoordinates(e);
+
+  // if gamer places selected ball in another column above top ball
+  if (ball.col != col && row >= grid[col].length) {
+    // animate drop movement
+    moveBall(ball, col, grid[col].length, onDropFinish);
+    // callback events after animation
+    function onDropFinish() {
+      // delete ball from previous column
+      grid[ball.col].pop(ball);
+      // set new position of the ball
+      ball.setPos(col, grid[col].length);
+      // add to selected column
+      grid[col].push(ball);
+      // check match between 2 last balls in column after gamer turn
+      // if no match than add new row and check for matching again
+      if (!checkMatch(grid[col])) {
+        if (!checkGameOver()) {
+          setTimeout(() => {
+            liftBalls(() => {
+              addNewBalls();
+              grid.forEach(col => checkMatch(col));
+              checkCanPlay();
+            });
+          }, 600);
+        }
+      }
+    }
+  } else {
+    // return to previous position
+    moveBall(ball, ball.col, ball.row, () => {
+      ball.setPos(ball.col, ball.row);
+    });
+  }
 }
 
 function defineCoordinates(e) {
