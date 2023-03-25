@@ -1,26 +1,61 @@
-const startScreen = document.querySelector('.start');
-const mainScreen = document.querySelector('.main');
-const gameOverScreen = document.querySelector('.game-over');
-const scoreField = document.querySelector('.score');
-const highScoreField = document.querySelector('.highscore');
-const startHighScore = document.querySelector('.bestscore');
-const board = document.querySelector('.board');
-const startBtn = document.querySelector('.btn-start');
-const restartBtn = document.querySelector('.btn-restart');
-const gameOverMessage = document.querySelector('.game-over p');
-const ui = document.querySelector('.ui');
-const root = document.querySelector(':root');
+// const startScreen = document.querySelector('.start');
+// const mainScreen = document.querySelector('.main');
+// const gameOverScreen = document.querySelector('.game-over');
+// const scoreField = document.querySelector('.score');
+// const highScoreField = document.querySelector('.highscore');
+// const startHighScore = document.querySelector('.bestscore');
+// const board = document.querySelector('.board');
+// const startBtn = document.querySelector('.btn-start');
+// const restartBtn = document.querySelector('.btn-restart');
+// const gameOverMessage = document.querySelector('.game-over p');
+// const ui = document.querySelector('.ui');
+// const root = document.querySelector(':root');
 
-const ballSize = 50;
-const cell = 50;
-const gap = 20;
-const colN = 5;
-const rowN = 7;
+// import DOM objects
+import {
+  startScreen,
+  mainScreen,
+  gameOverScreen,
+  scoreField,
+  highScoreField,
+  startHighScore,
+  board,
+  startBtn,
+  restartBtn,
+  gameOverMessage,
+  ui,
+} from './dom.js';
+
+import {
+  ballSize,
+  cell,
+  gap,
+  colN,
+  rowN,
+  boardX,
+  boardY,
+  boardH,
+  boardW,
+  setBoardSizes,
+  getLeftFromCol,
+  getTopFromRow,
+} from './dimentions.js';
+
+import { changeColorTheme, refreshColors } from './colors.js';
+
+import Ball from './ball.js';
+
+// import delta value for smooth animation independent from fps
+import { delta, setDelta } from './animation.js';
+// set animation speed independent from screen fps;
+// call setDelta every requestAnimationFrame
+requestAnimationFrame(setDelta);
+
 const key = 'highscore';
 
 let grid = [[], [], [], [], []];
+
 let animationIsPlaying = false;
-let pointsLimit = 3;
 let score = 0;
 let highscore = localStorage.getItem(key) ?? 0;
 // reset highscore
@@ -32,75 +67,14 @@ if (highscore > 0) {
   startHighScore.classList.remove('hidden');
 }
 
-// set animation speed independent from screen fps;
-let delta = 0;
-let fps = 0;
-let accumulator = [];
-let lastTime = 0;
-const animationSpeed = 600; // 60fps * 10px
-
-function setDelta() {
-  let currentTime = performance.now();
-  let deltaTime = (currentTime - lastTime) / 1000; // delta time in seconds
-  lastTime = currentTime;
-  fps = 1 / deltaTime;
-  accumulator.push(fps);
-  // define average fps of 10 last values
-  if (accumulator.length > 10) accumulator.shift();
-  let averageFPS =
-    accumulator.reduce((sum, fps) => (sum += fps), 0) / accumulator.length;
-
-  delta = animationSpeed / averageFPS;
-  // console.log(delta);
-  requestAnimationFrame(setDelta);
-}
-
-// call setDelta every requestAnimationFrame
-requestAnimationFrame(setDelta);
-
-// change color theme of game when player achives breakpoints
-const colorTheme = [
-  { darkColor: '#28b485', lightColor: '#7ed56f' }, // green
-  { darkColor: '#5643fa', lightColor: '#2998ff' }, // blue
-  { darkColor: '#ff7730', lightColor: '#ffb900' }, // orange
-  { darkColor: '#bf2e34', lightColor: '#753682' }, // pink
-];
-
-let colorBrekpoints = [128, 256, 512, 1024];
-let currentColorTheme = 0;
-
-function setColorTheme(colorN) {
-  root.style.setProperty('--color-dark', colorTheme[colorN].darkColor);
-  root.style.setProperty('--color-light', colorTheme[colorN].lightColor);
-}
-
-function changeColorTheme(points) {
-  if (points === colorBrekpoints[0]) {
-    currentColorTheme++;
-    setColorTheme(currentColorTheme);
-    colorBrekpoints.shift();
-    // console.log(colorBrekpoints);
-  }
-}
-
 // start game
 startBtn.addEventListener('click', init);
-
-let boardX, boardY, boardW, boardH;
 
 function init() {
   startScreen.classList.add('hidden');
   mainScreen.classList.remove('hidden');
-
   // set gamefield sizes;
-  board.style.height = `${rowN * cell + (rowN + 1) * gap}px`;
-  board.style.width = `${colN * cell + (colN + 1) * gap}px`;
-
-  boardX = board.getBoundingClientRect().left;
-  boardY = board.getBoundingClientRect().top;
-  boardW = board.clientWidth;
-  boardH = board.clientHeight;
-
+  setBoardSizes();
   // start game
   start();
 }
@@ -113,11 +87,9 @@ function start() {
   board.innerHTML = '';
 
   //set default values
-  colorBrekpoints = [128, 256, 512, 1024];
-  currentColorTheme = 0;
+
   grid = [[], [], [], [], []];
   animationIsPlaying = false;
-  pointsLimit = 3;
   score = 0;
   highscore = localStorage.getItem(key) ?? 0;
   highScoreField.innerText = `highscore: ${highscore}`;
@@ -125,82 +97,10 @@ function start() {
   gameOverScreen.classList.add('hidden');
   gameOverMessage.classList.remove('game-over-anim');
   // start new game
-  setColorTheme(currentColorTheme);
+  refreshColors();
   updateScore(score);
   updateHighscore();
   addNewBalls();
-}
-
-function getLeftFromCol(col) {
-  return gap + col * cell + col * gap;
-}
-
-function getTopFromRow(row) {
-  return gap + (rowN - row - 1) * cell + (rowN - row - 1) * gap;
-}
-
-function Ball() {
-  // coordinates at board grid
-  this.col = 0;
-  this.row = 0;
-  this.points = getRandomPoints(pointsLimit);
-  this.html = createHtmlElement(this.points);
-
-  // get absolute screen coordinates
-  this.getX = function () {
-    return this.html.getBoundingClientRect().left;
-  };
-
-  this.getY = function () {
-    return this.html.getBoundingClientRect().top;
-  };
-
-  // get relative to the board coordinates
-  this.getLeft = function () {
-    return Number(this.html.style.left.replace('px', ''));
-  };
-
-  this.getTop = function () {
-    return Number(this.html.style.top.replace('px', ''));
-  };
-
-  // get and set new points
-  this.updatePoints = function (newPoints) {
-    this.points = newPoints;
-    this.html.innerText = newPoints;
-  };
-
-  // set position in the board grid
-  this.setPos = function (col, row) {
-    this.col = col;
-    this.row = row;
-    // set coordinates relative to the board
-    let left = getLeftFromCol(col);
-    let top = getTopFromRow(row);
-    this.setLeftTop(left, top);
-  };
-
-  // set coordinates relative to the board
-  this.setLeftTop = function (left, top) {
-    this.html.style.left = `${left}px`;
-    this.html.style.top = `${top}px`;
-  };
-
-  function createHtmlElement(points) {
-    const ball = document.createElement('div');
-    ball.innerText = points;
-    ball.classList.add('ball');
-    ball.style.width = `${ballSize}px`;
-    ball.style.height = `${ballSize}px`;
-    board.appendChild(ball);
-    return ball;
-  }
-
-  function getRandomPoints(lim) {
-    const points = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048];
-    let randomNum = Math.trunc(Math.random() * lim);
-    return points[randomNum];
-  }
 }
 
 function addNewBalls() {
@@ -345,7 +245,7 @@ function grabBall(ball, pointerX, pointerY) {
     // define cell under the pointer
     let { col, row } = defineCoordinates(e);
 
-    // if gamer places selected ball in another column above last ball
+    // if gamer places selected ball in another column above top ball
     if (ball.col != col && row >= grid[col].length) {
       // animate drop movement
       moveBall(ball, col, grid[col].length, onDropFinish);
