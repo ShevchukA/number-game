@@ -37,6 +37,7 @@ import Ball from './ball.js';
 
 // import delta value for smooth animation independent from fps
 import { delta, setDelta } from './animation.js';
+//let delta = 1;
 
 // call setDelta every requestAnimationFrame
 requestAnimationFrame(setDelta);
@@ -165,11 +166,15 @@ function updateHighscore() {
 }
 
 // Prevent browser default drag'n'drop behaviour
-board.ondragstart = function () {
-  return false;
-};
+// board.ondragstart = function () {}
+board.addEventListener('dragstart', function (e) {
+  e.preventDefault();
+});
 
-board.onpointerdown = function (e) {
+//board.onpointerdown = function (e) {}
+board.addEventListener('pointerdown', onPointerDown);
+
+function onPointerDown(e) {
   // define cell under the pointer
   let { pointerX, pointerY, col, row } = defineCoordinates(e);
   // console.log(col, row);
@@ -187,7 +192,7 @@ board.onpointerdown = function (e) {
       showAims(col);
     }
   }
-};
+}
 
 function grabBall(ball, pointerX, pointerY) {
   // add some shadow to the grabbed ball
@@ -218,7 +223,8 @@ function grabBall(ball, pointerX, pointerY) {
     ) {
       // remove event handlers
       board.removeEventListener('pointermove', onPointerMoveBall);
-      board.onpointerup = null;
+      board.removeEventListener('pointerup', onPointerUp);
+      //board.onpointerup = null;
       // hide all aims
       hideAims();
       // return to previous position
@@ -227,14 +233,19 @@ function grabBall(ball, pointerX, pointerY) {
     }
   }
 
-  board.onpointerup = function (e) {
+  //board.onpointerup = function (e) {}
+
+  board.addEventListener('pointerup', onPointerUp);
+
+  function onPointerUp(e) {
     board.removeEventListener('pointermove', onPointerMoveBall);
     hideAims();
     ball.html.classList.remove('ball-grabbed');
     dropBall(ball, e);
     //console.log(grid);
-    this.onpointerup = null;
-  };
+    board.removeEventListener('pointerup', onPointerUp);
+    //this.onpointerup = null;
+  }
 }
 
 function dropBall(ball, e) {
@@ -263,7 +274,7 @@ function dropBall(ball, e) {
               grid.forEach(col => checkMatch(col));
               checkCanPlay();
             });
-          }, 600);
+          }, 600); //600
         }
       }
     }
@@ -292,6 +303,7 @@ function checkMatch(col) {
     score += achievedPoints;
     updateScore(score);
 
+    //move ball down to merge with next ball
     setTimeout(() => {
       let ball = col.pop();
       moveBall(ball, ball.col, ball.row - 1, () => {
@@ -303,7 +315,7 @@ function checkMatch(col) {
         // check match again
         checkMatch(col);
       });
-    }, 150);
+    }, 150); //150
 
     // remove merged balls from DOM
     document.querySelectorAll('ball-merged').forEach(ball => ball.remove());
