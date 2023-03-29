@@ -174,15 +174,13 @@ function updateHighscore() {
 // board.ondragstart = function () {}
 board.addEventListener('dragstart', e => e.preventDefault());
 
-// Prevent multi touch actions on mobile devices
-board.addEventListener('touchmove', e => {
-  if (e.touches.length > 1) {
-    e.preventDefault();
-  }
-});
-
 //board.onpointerdown = function (e) {}
-board.addEventListener('pointerdown', onPointerDown);
+board.addEventListener('pointerdown', e => {
+  //Prevent multi touch actions on mobile devices
+  if (!e.isPrimary) e.preventDefault();
+  //actions for primary pointer
+  onPointerDown(e);
+});
 
 function onPointerDown(e) {
   // define cell under the pointer
