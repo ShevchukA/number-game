@@ -92,7 +92,7 @@ function start() {
   updateScore(score);
   updateHighscore();
   addNewBalls();
-  liftBalls();
+  liftBalls(() => {});
 }
 
 function addNewBalls() {
@@ -101,10 +101,10 @@ function addNewBalls() {
     ball.setPos(i, -1);
     grid[i].unshift(ball);
   }
-  console.log(grid);
+  // console.log(grid);
 }
 
-function liftBalls() {
+function liftBalls(onLiftEnded) {
   for (let col = 0; col < colN; col++) {
     for (let row = 0; row < grid[col].length; row++) {
       let ball = grid[col][row];
@@ -114,6 +114,8 @@ function liftBalls() {
       });
     }
   }
+
+  onLiftEnded();
   console.log(grid);
 }
 
@@ -264,22 +266,24 @@ function dropBall(ball, e) {
       // add to selected column
       grid[col].push(ball);
       // check match between 2 last balls in column after gamer turn
-      // if no match than add new row and check for matching again
       canGrabBall = false;
       if (!checkMatch(grid[col])) {
         if (!checkGameOver()) {
           setTimeout(() => {
             addNewBalls();
-            liftBalls();
-            // check fo matches
-            let matches = [];
-            grid.forEach(col => matches.push(checkMatch(col)));
-            //if there are no matches after adding new row than can play next
-            if (!matches.includes(true)) canGrabBall = true;
-            checkCanPlay();
+            liftBalls(() => {
+              // check fo matches in all columns
+              let matches = [];
+              grid.forEach(col => matches.push(checkMatch(col)));
+              //if there are no matches after adding new row than can play next
+              if (!matches.includes(true)) canGrabBall = true;
+              checkCanPlay();
+            });
           }, 600); //600ms delay
         }
       }
+      console.log(`after check`);
+      console.log(grid);
     }
   } else {
     // return to previous position
@@ -317,6 +321,8 @@ function checkMatch(col) {
         changeColorTheme(achievedPoints);
         // check match again
         checkMatch(col);
+        console.log('check all cols');
+        console.log(grid);
       });
     }, 150); //150ms delay
 
