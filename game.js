@@ -37,7 +37,7 @@ import Ball from './ball.js';
 
 // import delta value for smooth animation independent from fps
 import { delta, setDelta } from './animation.js';
-//let delta = 1;
+// let delta = 1; //for debagging
 
 // call setDelta every requestAnimationFrame
 requestAnimationFrame(setDelta);
@@ -46,7 +46,7 @@ const key = 'highscore';
 
 let grid = [[], [], [], [], []];
 
-let animationIsPlaying = false;
+let canGrabBall = true;
 let score = 0;
 let highscore = localStorage.getItem(key) ?? 0;
 // reset highscore
@@ -80,7 +80,7 @@ function start() {
   //set default values
 
   grid = [[], [], [], [], []];
-  animationIsPlaying = false;
+  canGrabBall = true;
   score = 0;
   highscore = localStorage.getItem(key) ?? 0;
   highScoreField.innerText = `highscore: ${highscore}`;
@@ -121,7 +121,7 @@ function moveBall(ball, col, row, onAnimationFinished) {
 
   if (ball.getLeft() != left || ball.getTop() != top) {
     //do animation
-    animationIsPlaying = true;
+    canGrabBall = false;
 
     let deltaTop;
     let deltaLeft;
@@ -147,7 +147,7 @@ function moveBall(ball, col, row, onAnimationFinished) {
     // repeat untill ball will get the target
     repeat();
   } else {
-    animationIsPlaying = false;
+    canGrabBall = true;
     // call next actions after animation
     onAnimationFinished();
   }
@@ -183,11 +183,7 @@ function onPointerDown(e) {
   if (grid[col][row] && row === grid[col].length - 1) {
     let ball = grid[col][row];
     // check if pointer down exactly on the ball than grab the ball
-    if (
-      pointerX > ball.getX() &&
-      pointerY > ball.getY() &&
-      !animationIsPlaying
-    ) {
+    if (pointerX > ball.getX() && pointerY > ball.getY() && canGrabBall) {
       grabBall(ball, pointerX, pointerY);
       showAims(col);
     }
@@ -266,15 +262,19 @@ function dropBall(ball, e) {
       grid[col].push(ball);
       // check match between 2 last balls in column after gamer turn
       // if no match than add new row and check for matching again
+      canGrabBall = false;
       if (!checkMatch(grid[col])) {
         if (!checkGameOver()) {
           setTimeout(() => {
             liftBalls(() => {
               addNewBalls();
-              grid.forEach(col => checkMatch(col));
+              //if there are no matches after adding new row than can play next
+              let matches = [];
+              grid.forEach(col => matches.push(checkMatch(col)));
+              if (!matches.includes(true)) canGrabBall = true;
               checkCanPlay();
             });
-          }, 600); //600
+          }, 600); //600ms delay
         }
       }
     }
@@ -315,7 +315,7 @@ function checkMatch(col) {
         // check match again
         checkMatch(col);
       });
-    }, 150); //150
+    }, 150); //150ms delay
 
     // remove merged balls from DOM
     document.querySelectorAll('ball-merged').forEach(ball => ball.remove());
@@ -362,7 +362,7 @@ function checkGameOver() {
 }
 
 function checkCanPlay() {
-  // if there are no empty cells then game over
+  // if there are no columns with empty cells then game over
   if (!grid.find(col => col.length < rowN)) gameOver();
 }
 
