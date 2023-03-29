@@ -92,24 +92,29 @@ function start() {
   updateScore(score);
   updateHighscore();
   addNewBalls();
+  liftBalls();
 }
 
 function addNewBalls() {
   for (let i = 0; i < colN; i++) {
     const ball = new Ball();
-    ball.setPos(i, 0);
+    ball.setPos(i, -1);
     grid[i].unshift(ball);
   }
-  // console.log(grid);
+  console.log(grid);
 }
 
-function liftBalls(onLiftingEnds) {
+function liftBalls() {
   for (let col = 0; col < colN; col++) {
     for (let row = 0; row < grid[col].length; row++) {
-      grid[col][row].setPos(col, row + 1);
+      let ball = grid[col][row];
+      //as new row has index -1 and for loop starts from 0 -> final row index is already has +1
+      moveBall(ball, col, row, () => {
+        ball.setPos(col, row);
+      });
     }
   }
-  onLiftingEnds();
+  console.log(grid);
 }
 
 function moveBall(ball, col, row, onAnimationFinished) {
@@ -178,7 +183,9 @@ board.addEventListener('dragstart', e => e.preventDefault());
 
 //board.onpointerdown = function (e) {}
 board.addEventListener('pointerdown', e => {
+  //Prevent multi touch actions on mobile devices
   if (!e.isPrimary) e.preventDefault();
+  //actions for primary pointer
   onPointerDown(e);
 });
 
@@ -274,14 +281,14 @@ function dropBall(ball, e) {
       if (!checkMatch(grid[col])) {
         if (!checkGameOver()) {
           setTimeout(() => {
-            liftBalls(() => {
-              addNewBalls();
-              //if there are no matches after adding new row than can play next
-              let matches = [];
-              grid.forEach(col => matches.push(checkMatch(col)));
-              if (!matches.includes(true)) canGrabBall = true;
-              checkCanPlay();
-            });
+            addNewBalls();
+            liftBalls();
+            // check fo matches
+            let matches = [];
+            grid.forEach(col => matches.push(checkMatch(col)));
+            //if there are no matches after adding new row than can play next
+            if (!matches.includes(true)) canGrabBall = true;
+            checkCanPlay();
           }, 600); //600ms delay
         }
       }
