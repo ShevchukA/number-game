@@ -175,12 +175,7 @@ function updateHighscore() {
 board.addEventListener('dragstart', e => e.preventDefault());
 
 //board.onpointerdown = function (e) {}
-board.addEventListener('pointerdown', e => {
-  //Prevent multi touch actions on mobile devices
-  if (!e.isPrimary) e.preventDefault();
-  //actions for primary pointer
-  onPointerDown(e);
-});
+board.addEventListener('pointerdown', onPointerDown);
 
 function onPointerDown(e) {
   // define cell under the pointer
