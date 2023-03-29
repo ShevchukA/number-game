@@ -92,7 +92,7 @@ function start() {
   updateScore(score);
   updateHighscore();
   addNewBalls();
-  liftBalls(() => {});
+  liftBalls();
 }
 
 function addNewBalls() {
@@ -101,10 +101,10 @@ function addNewBalls() {
     ball.setPos(i, -1);
     grid[i].unshift(ball);
   }
-  // console.log(grid);
+  //console.log(grid);
 }
 
-function liftBalls(onLiftEnded) {
+function liftBalls() {
   for (let col = 0; col < colN; col++) {
     for (let row = 0; row < grid[col].length; row++) {
       let ball = grid[col][row];
@@ -114,9 +114,7 @@ function liftBalls(onLiftEnded) {
       });
     }
   }
-
-  onLiftEnded();
-  console.log(grid);
+  //console.log(grid);
 }
 
 function moveBall(ball, col, row, onAnimationFinished) {
@@ -271,19 +269,17 @@ function dropBall(ball, e) {
         if (!checkGameOver()) {
           setTimeout(() => {
             addNewBalls();
-            liftBalls(() => {
-              // check fo matches in all columns
-              let matches = [];
-              grid.forEach(col => matches.push(checkMatch(col)));
-              //if there are no matches after adding new row than can play next
-              if (!matches.includes(true)) canGrabBall = true;
-              checkCanPlay();
-            });
+            liftBalls();
+            // check fo matches in all columns
+            let matches = [];
+            grid.forEach(col => matches.push(checkMatch(col)));
+            //if there are no matches after adding new row than can play next
+            if (!matches.includes(true)) canGrabBall = true;
+            checkCanPlay();
           }, 600); //600ms delay
         }
       }
-      console.log(`after check`);
-      console.log(grid);
+      // console.log(grid);
     }
   } else {
     // return to previous position
@@ -321,8 +317,7 @@ function checkMatch(col) {
         changeColorTheme(achievedPoints);
         // check match again
         checkMatch(col);
-        console.log('check all cols');
-        console.log(grid);
+        // console.log(grid);
       });
     }, 150); //150ms delay
 
