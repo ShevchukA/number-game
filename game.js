@@ -310,6 +310,8 @@ function checkMatch(col) {
     setTimeout(() => {
       let ball = col.pop();
       moveBall(ball, ball.col, ball.row - 1, () => {
+        playSound(kickBass);
+
         // merge two balls
         col.at(-1).updatePoints(achievedPoints);
         ball.html.classList.add('ball-merged');
@@ -380,3 +382,11 @@ function gameOver() {
     start();
   };
 }
+
+let kickBass = new Audio('sounds/kick-bass.mp3');
+function playSound(soundName) {
+  soundName.currentTime = 0;
+  soundName.play();
+}
+
+playSound(kickBass);
