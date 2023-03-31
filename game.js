@@ -13,6 +13,8 @@ import {
   ui,
 } from './dom.js';
 
+import { playSound, kickBass } from './sounds.js';
+
 // import dimentions for game objects
 import {
   ballSize,
@@ -322,6 +324,7 @@ function mergeBalls(col, achievedPoints) {
   let ball = col.pop();
   //move ball down to merge with next ball
   moveBall(ball, ball.col, ball.row - 1, () => {
+    playSound(kickBass);
     // merge two balls
     col.at(-1).updatePoints(achievedPoints);
     ball.html.classList.add('ball-merged');

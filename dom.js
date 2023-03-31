@@ -7,6 +7,7 @@ const startHighScore = document.querySelector('.bestscore');
 const board = document.querySelector('.board');
 const startBtn = document.querySelector('.btn-start');
 const restartBtn = document.querySelector('.btn-restart');
+const soundBtn = document.querySelector('.btn-sound');
 const gameOverMessage = document.querySelector('.game-over p');
 const ui = document.querySelector('.ui');
 const root = document.querySelector(':root');
@@ -21,6 +22,7 @@ export {
   board,
   startBtn,
   restartBtn,
+  soundBtn,
   gameOverMessage,
   ui,
   root,

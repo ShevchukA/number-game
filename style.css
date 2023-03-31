@@ -65,6 +65,19 @@ body {
   animation: show 600ms ease-in 600ms 1 forwards;
 }
 
+.btn-sound {
+  width: 20px;
+  height: 20px;
+  font-size: 1.2rem;
+  color: #fff;
+  background: none;
+  border: none;
+  margin: 0 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .start .bestscore {
   font-size: 1.2rem;
   color: #fff;
