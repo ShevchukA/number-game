@@ -182,6 +182,8 @@ function onPointerDown(e) {
   let { pointerX, pointerY, col, row } = defineCoordinates(e);
   // console.log(col, row);
 
+  // TODO если pointerX, pointerY, col, row = undefined то e.preventDefault();
+
   // if top cell in column contain the ball then can move ball
   if (grid[col][row] && row === grid[col].length - 1) {
     let ball = grid[col][row];
@@ -255,6 +257,7 @@ function dropBall(ball, e) {
   if (ball.col != col && row >= grid[col].length) {
     // animate drop movement
     moveBall(ball, col, grid[col].length, onDropFinish);
+
     // callback events after animation
     function onDropFinish() {
       // delete ball from previous column
@@ -306,27 +309,30 @@ function checkMatch(col) {
     score += achievedPoints;
     updateScore(score);
 
-    //move ball down to merge with next ball
-    setTimeout(() => {
-      let ball = col.pop();
-      moveBall(ball, ball.col, ball.row - 1, () => {
-        // merge two balls
-        col.at(-1).updatePoints(achievedPoints);
-        ball.html.classList.add('ball-merged');
-        // change color theme if necessary
-        changeColorTheme(achievedPoints);
-        // check match again
-        checkMatch(col);
-        // console.log(grid);
-      });
-    }, 150); //150ms delay
+    // merge balls after small delay
+    setTimeout(() => mergeBalls(col, achievedPoints), 150); //150ms delay
 
-    // remove merged balls from DOM
-    document.querySelectorAll('ball-merged').forEach(ball => ball.remove());
     return true;
   } else {
     return false;
   }
+}
+
+function mergeBalls(col, achievedPoints) {
+  let ball = col.pop();
+  //move ball down to merge with next ball
+  moveBall(ball, ball.col, ball.row - 1, () => {
+    // merge two balls
+    col.at(-1).updatePoints(achievedPoints);
+    ball.html.classList.add('ball-merged');
+    // remove merged balls from DOM
+    document.querySelectorAll('ball-merged').forEach(ball => ball.remove());
+    // change color theme if necessary
+    changeColorTheme(achievedPoints);
+    // check match again
+    checkMatch(col);
+    // console.log(grid);
+  });
 }
 
 function addAim(col, row) {
