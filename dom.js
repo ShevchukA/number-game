@@ -12,6 +12,8 @@ const gameOverMessage = document.querySelector('.game-over p');
 const ui = document.querySelector('.ui');
 const root = document.querySelector(':root');
 
+soundBtn.innerHTML = '<i class="fa-solid fa-volume-low"></i>';
+
 export {
   startScreen,
   mainScreen,

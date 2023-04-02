@@ -2,6 +2,8 @@ import { soundBtn } from './dom.js';
 
 let mergeSound = new Audio('sounds/merge.wav');
 let mergeBigSound = new Audio('sounds/merge-big.wav');
+let gameStartSound = new Audio('sounds/game-start.wav');
+let gameOverSound = new Audio('sounds/game-over.wav');
 
 let soundsOn = true;
 
@@ -12,7 +14,6 @@ function playSound(soundName) {
   }
 }
 
-soundBtn.innerHTML = '<i class="fa-solid fa-volume-low"></i>';
 soundBtn.addEventListener('click', () => {
   if (soundsOn) {
     soundsOn = false;
@@ -23,4 +24,4 @@ soundBtn.addEventListener('click', () => {
   }
 });
 
-export { playSound, mergeSound, mergeBigSound };
+export { playSound, mergeSound, mergeBigSound, gameStartSound, gameOverSound };

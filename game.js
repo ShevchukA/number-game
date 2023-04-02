@@ -13,7 +13,13 @@ import {
   ui,
 } from './dom.js';
 
-import { playSound, mergeSound, mergeBigSound } from './sounds.js';
+import {
+  playSound,
+  mergeSound,
+  mergeBigSound,
+  gameStartSound,
+  gameOverSound,
+} from './sounds.js';
 
 // import dimentions for game objects
 import {
@@ -73,6 +79,7 @@ function init() {
 }
 
 function start() {
+  playSound(gameStartSound);
   // remove html elements from DOM
   board.innerHTML = '';
 
@@ -389,6 +396,7 @@ function checkCanPlay() {
 function gameOver() {
   updateHighscore();
   // show gameOverScreen
+  playSound(gameOverSound);
   gameOverScreen.classList.remove('hidden');
   gameOverMessage.classList.add('game-over-anim');
   ui.style.zIndex = 3;
