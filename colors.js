@@ -1,7 +1,7 @@
 import { root } from './dom.js';
 
 let currentColorTheme = 0;
-let colorBrekpoints = [128, 256, 512, 1024];
+let gameBrekpoints = [128, 256, 512, 1024];
 
 const colorTheme = [
   { darkColor: '#28b485', lightColor: '#7ed56f' }, // green
@@ -17,18 +17,18 @@ function setColorTheme(color) {
 
 // change color theme of game when player achives breakpoints
 function changeColorTheme(points) {
-  if (points === colorBrekpoints[0]) {
+  if (points === gameBrekpoints[0]) {
     currentColorTheme++;
     setColorTheme(currentColorTheme);
-    colorBrekpoints.shift();
-    // console.log(colorBrekpoints);
+    gameBrekpoints.shift();
+    // console.log(gameBrekpoints);
   }
 }
 
 function refreshColors() {
-  colorBrekpoints = [128, 256, 512, 1024];
+  gameBrekpoints = [128, 256, 512, 1024];
   currentColorTheme = 0;
   setColorTheme(currentColorTheme);
 }
 
-export { changeColorTheme, refreshColors };
+export { changeColorTheme, refreshColors, gameBrekpoints };

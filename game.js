@@ -13,7 +13,7 @@ import {
   ui,
 } from './dom.js';
 
-import { playSound, kickBass } from './sounds.js';
+import { playSound, mergeSound, mergeBigSound } from './sounds.js';
 
 // import dimentions for game objects
 import {
@@ -32,7 +32,7 @@ import {
 } from './dimentions.js';
 
 // import color control functions
-import { changeColorTheme, refreshColors } from './colors.js';
+import { changeColorTheme, refreshColors, gameBrekpoints } from './colors.js';
 
 // import ball constructor
 import Ball from './ball.js';
@@ -74,13 +74,9 @@ function init() {
 
 function start() {
   // remove html elements from DOM
-  // while (board.hasChildNodes()) {
-  //   board.removeChild(board.lastChild);
-  // }
   board.innerHTML = '';
 
   //set default values
-
   grid = [[], [], [], [], []];
   canGrabBall = true;
   score = 0;
@@ -103,20 +99,29 @@ function addNewBalls() {
     ball.setPos(i, -1);
     grid[i].unshift(ball);
   }
-  //console.log(grid);
 }
 
-function liftBalls() {
-  for (let col = 0; col < colN; col++) {
-    for (let row = 0; row < grid[col].length; row++) {
-      let ball = grid[col][row];
-      //as new row has index -1 and for loop starts from 0 -> final row index is already has +1
-      moveBall(ball, col, row, () => {
-        ball.setPos(col, row);
-      });
+async function liftBalls() {
+  return new Promise(resolve => {
+    let ballsMoving = 0;
+    for (let col = 0; col < colN; col++) {
+      for (let row = 0; row < grid[col].length; row++) {
+        let ball = grid[col][row];
+        //increase counter when start moving current ball
+        ballsMoving++;
+        //as new row has index -1 and for loop starts from 0 -> final row index is already has +1
+        moveBall(ball, col, row, () => {
+          ball.setPos(col, row);
+          //decrease counter when ball ends moving
+          ballsMoving--;
+          //resolve when all balls finished moving
+          if (ballsMoving === 0) {
+            resolve();
+          }
+        });
+      }
     }
-  }
-  //console.log(grid);
+  });
 }
 
 function moveBall(ball, col, row, onAnimationFinished) {
@@ -183,16 +188,20 @@ function onPointerDown(e) {
   // define cell under the pointer
   let { pointerX, pointerY, col, row } = defineCoordinates(e);
   // console.log(col, row);
-
-  // TODO если pointerX, pointerY, col, row = undefined то e.preventDefault();
-
-  // if top cell in column contain the ball then can move ball
-  if (grid[col][row] && row === grid[col].length - 1) {
-    let ball = grid[col][row];
-    // check if pointer down exactly on the ball than grab the ball
-    if (pointerX > ball.getX() && pointerY > ball.getY() && canGrabBall) {
-      grabBall(ball, pointerX, pointerY);
-      showAims(col);
+  if (
+    pointerX !== undefined ||
+    pointerY !== undefined ||
+    col !== undefined ||
+    row !== undefined
+  ) {
+    // if top cell in column contain the ball then can move ball
+    if (grid[col][row] && row === grid[col].length - 1) {
+      let ball = grid[col][row];
+      // check if pointer down exactly on the ball than grab the ball
+      if (pointerX > ball.getX() && pointerY > ball.getY() && canGrabBall) {
+        grabBall(ball, pointerX, pointerY);
+        showAims(col);
+      }
     }
   }
 }
@@ -207,7 +216,6 @@ function grabBall(ball, pointerX, pointerY) {
   // console.log(ball);
 
   board.addEventListener('pointermove', onPointerMoveBall);
-
   function onPointerMoveBall(e) {
     let { pointerX, pointerY } = defineCoordinates(e);
     // set relative to the board coordinates
@@ -237,17 +245,13 @@ function grabBall(ball, pointerX, pointerY) {
   }
 
   //board.onpointerup = function (e) {}
-
   board.addEventListener('pointerup', onPointerUp);
-
   function onPointerUp(e) {
     board.removeEventListener('pointermove', onPointerMoveBall);
     hideAims();
     ball.html.classList.remove('ball-grabbed');
     dropBall(ball, e);
-    //console.log(grid);
     board.removeEventListener('pointerup', onPointerUp);
-    //this.onpointerup = null;
   }
 }
 
@@ -272,9 +276,9 @@ function dropBall(ball, e) {
       canGrabBall = false;
       if (!checkMatch(grid[col])) {
         if (!checkGameOver()) {
-          setTimeout(() => {
+          setTimeout(async () => {
             addNewBalls();
-            liftBalls();
+            await liftBalls();
             // check fo matches in all columns
             let matches = [];
             grid.forEach(col => matches.push(checkMatch(col)));
@@ -284,7 +288,6 @@ function dropBall(ball, e) {
           }, 600); //600ms delay
         }
       }
-      // console.log(grid);
     }
   } else {
     // return to previous position
@@ -299,7 +302,6 @@ function defineCoordinates(e) {
   let pointerY = e.clientY;
   let col = Math.trunc((pointerX - boardX) / (gap + cell));
   let row = Math.trunc(rowN - (pointerY - boardY) / (gap + cell));
-  // console.log(pointerX, pointerY);
   return { pointerX, pointerY, col, row };
 }
 
@@ -324,17 +326,22 @@ function mergeBalls(col, achievedPoints) {
   let ball = col.pop();
   //move ball down to merge with next ball
   moveBall(ball, ball.col, ball.row - 1, () => {
-    playSound(kickBass);
+    if (achievedPoints === gameBrekpoints[0]) {
+      playSound(mergeBigSound);
+    } else {
+      playSound(mergeSound);
+    }
     // merge two balls
     col.at(-1).updatePoints(achievedPoints);
     ball.html.classList.add('ball-merged');
     // remove merged balls from DOM
-    document.querySelectorAll('ball-merged').forEach(ball => ball.remove());
+    setTimeout(() => {
+      document.querySelectorAll('.ball-merged').forEach(ball => ball.remove());
+    }, 300);
     // change color theme if necessary
     changeColorTheme(achievedPoints);
     // check match again
     checkMatch(col);
-    // console.log(grid);
   });
 }
 
@@ -349,7 +356,7 @@ function addAim(col, row) {
 }
 
 function showAims(exept) {
-  // for each column show possible aim for user
+  // for each column show possible aim for user except current column
   for (let col = 0; col < grid.length; col++) {
     let row = grid[col].length;
     if (col != exept && row < rowN) {

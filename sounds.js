@@ -1,6 +1,7 @@
 import { soundBtn } from './dom.js';
 
-let kickBass = new Audio('sounds/kick-bass.mp3');
+let mergeSound = new Audio('sounds/merge.wav');
+let mergeBigSound = new Audio('sounds/merge-big.wav');
 
 let soundsOn = true;
 
@@ -22,4 +23,4 @@ soundBtn.addEventListener('click', () => {
   }
 });
 
-export { playSound, kickBass };
+export { playSound, mergeSound, mergeBigSound };
