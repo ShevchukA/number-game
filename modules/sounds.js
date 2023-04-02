@@ -1,9 +1,9 @@
 import { soundBtn } from './dom.js';
 
-let mergeSound = new Audio('sounds/merge.wav');
-let mergeBigSound = new Audio('sounds/merge-big.wav');
-let gameStartSound = new Audio('sounds/game-start.wav');
-let gameOverSound = new Audio('sounds/game-over.wav');
+let mergeSound = new Audio('../sounds/merge.wav');
+let mergeBigSound = new Audio('../sounds/merge-big.wav');
+let gameStartSound = new Audio('../sounds/game-start.wav');
+let gameOverSound = new Audio('../sounds/game-over.wav');
 
 let soundsOn = true;
 

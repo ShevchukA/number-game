@@ -1,4 +1,5 @@
 import { ballSize, getLeftFromCol, getTopFromRow } from './dimentions.js';
+
 import { board } from './dom.js';
 
 function Ball() {

@@ -11,7 +11,7 @@ import {
   restartBtn,
   gameOverMessage,
   ui,
-} from './dom.js';
+} from './modules/dom.js';
 
 import {
   playSound,
@@ -19,7 +19,7 @@ import {
   mergeBigSound,
   gameStartSound,
   gameOverSound,
-} from './sounds.js';
+} from './modules/sounds.js';
 
 // import dimentions for game objects
 import {
@@ -35,16 +35,20 @@ import {
   setBoardSizes,
   getLeftFromCol,
   getTopFromRow,
-} from './dimentions.js';
+} from './modules/dimentions.js';
 
 // import color control functions
-import { changeColorTheme, refreshColors, gameBrekpoints } from './colors.js';
+import {
+  changeColorTheme,
+  refreshColors,
+  gameBrekpoints,
+} from './modules/colors.js';
 
 // import ball constructor
-import Ball from './ball.js';
+import Ball from './modules/ball.js';
 
 // import delta value for smooth animation independent from fps
-import { delta, setDelta } from './animation.js';
+import { delta, setDelta } from './modules/animation.js';
 // let delta = 1; //for debagging
 
 // call setDelta every requestAnimationFrame
