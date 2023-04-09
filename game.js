@@ -13,13 +13,7 @@ import {
   ui,
 } from './modules/dom.js';
 
-import {
-  playSound,
-  mergeSound,
-  mergeBigSound,
-  gameStartSound,
-  gameOverSound,
-} from './modules/sounds.js';
+import { playSound, loadSounds, sounds } from './modules/sounds.js';
 
 // import dimentions for game objects
 import {
@@ -70,7 +64,14 @@ if (highscore > 0) {
   startHighScore.classList.remove('hidden');
 }
 
+try {
+  await loadSounds();
+} catch (error) {
+  console.log(error);
+}
+
 // start game
+startBtn.innerText = 'play';
 startBtn.addEventListener('click', init);
 
 function init() {
@@ -83,7 +84,7 @@ function init() {
 }
 
 function start() {
-  playSound(gameStartSound);
+  playSound(sounds.gameStart);
   // remove html elements from DOM
   board.innerHTML = '';
 
@@ -289,6 +290,7 @@ function dropBall(ball, e) {
         if (!checkGameOver()) {
           setTimeout(async () => {
             addNewBalls();
+            playSound(sounds.addBalls);
             await liftBalls();
             // check fo matches in all columns
             let matches = [];
@@ -338,9 +340,9 @@ function mergeBalls(col, achievedPoints) {
   //move ball down to merge with next ball
   moveBall(ball, ball.col, ball.row - 1, () => {
     if (achievedPoints === gameBrekpoints[0]) {
-      playSound(mergeBigSound);
+      playSound(sounds.mergeBig);
     } else {
-      playSound(mergeSound);
+      playSound(sounds.merge);
     }
     // merge two balls
     col.at(-1).updatePoints(achievedPoints);
@@ -400,7 +402,7 @@ function checkCanPlay() {
 function gameOver() {
   updateHighscore();
   // show gameOverScreen
-  playSound(gameOverSound);
+  playSound(sounds.gameOver);
   gameOverScreen.classList.remove('hidden');
   gameOverMessage.classList.add('game-over-anim');
   ui.style.zIndex = 3;
