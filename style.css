@@ -12,7 +12,9 @@ Dark green: #28b485
   font-style: normal;
   font-weight: 700;
   /*src: url('./fonts/Lato-Bold.ttf') format('ttf');*/
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 @font-face {
@@ -20,7 +22,9 @@ Dark green: #28b485
   font-style: normal;
   font-weight: 400;
   /*src: url('./fonts/Lato-Regular.ttf') format('ttf');*/
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 :root {
@@ -28,11 +32,13 @@ Dark green: #28b485
   --color-light: #7ed56f;
 }
 
-
 * {
   margin: 0;
   padding: 0;
   box-sizing: inherit;
+
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 html,
@@ -43,7 +49,11 @@ body {
 }
 
 body {
-  background-image: linear-gradient(to top, var(--color-light), var(--color-dark));
+  background-image: linear-gradient(
+    to top,
+    var(--color-light),
+    var(--color-dark)
+  );
   background-size: cover;
   background-repeat: no-repeat;
   font-family: 'Arial', sans-serif;
@@ -175,7 +185,7 @@ body {
   }
 }
 
-@media (hover:hover) {
+@media (hover: hover) {
   .ball:hover {
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
   }
