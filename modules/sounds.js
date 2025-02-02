@@ -1,20 +1,25 @@
-import { soundBtn } from './dom.js';
+import { soundBtnOn, soundBtnOff } from './dom.js';
+import merge from '../sounds/merge.wav';
+import mergeBig from '../sounds/merge-big.wav';
+import gameStart from '../sounds/game-start.wav';
+import gameOver from '../sounds/game-over.wav';
+import addBalls from '../sounds/add-balls.wav';
 
 const sounds = {
   merge: {
-    url: './sounds/merge.wav',
+    url: merge,
   },
   mergeBig: {
-    url: './sounds/merge-big.wav',
+    url: mergeBig,
   },
   gameStart: {
-    url: './sounds/game-start.wav',
+    url: gameStart,
   },
   gameOver: {
-    url: './sounds/game-over.wav',
+    url: gameOver,
   },
   addBalls: {
-    url: './sounds/add-balls.wav',
+    url: addBalls,
   },
 };
 
@@ -55,14 +60,15 @@ function playSound(soundName) {
   }
 }
 
-soundBtn.addEventListener('click', () => {
-  if (soundsOn) {
-    soundsOn = false;
-    soundBtn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
-  } else {
-    soundsOn = true;
-    soundBtn.innerHTML = '<i class="fa-solid fa-volume-low"></i>';
-  }
+soundBtnOn.addEventListener('click', () => {
+  soundsOn = false;
+  soundBtnOn.style.display = 'none';
+  soundBtnOff.style.display = 'block';
+});
+soundBtnOff.addEventListener('click', () => {
+  soundsOn = true;
+  soundBtnOn.style.display = 'block';
+  soundBtnOff.style.display = 'none';
 });
 
 export { playSound, loadSounds, sounds };

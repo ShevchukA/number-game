@@ -7,12 +7,12 @@ const startHighScore = document.querySelector('.bestscore');
 const board = document.querySelector('.board');
 const startBtn = document.querySelector('.btn-start');
 const restartBtn = document.querySelector('.btn-restart');
-const soundBtn = document.querySelector('.btn-sound');
+const soundBtnOn = document.querySelector('.btn-sound-on');
+const soundBtnOff = document.querySelector('.btn-sound-off');
 const gameOverMessage = document.querySelector('.game-over p');
 const ui = document.querySelector('.ui');
 const root = document.querySelector(':root');
 
-soundBtn.innerHTML = '<i class="fa-solid fa-volume-low"></i>';
 
 export {
   startScreen,
@@ -24,7 +24,8 @@ export {
   board,
   startBtn,
   restartBtn,
-  soundBtn,
+  soundBtnOn,
+  soundBtnOff,
   gameOverMessage,
   ui,
   root,

@@ -15,6 +15,8 @@ import {
 
 import { playSound, loadSounds, sounds } from './modules/sounds.js';
 
+import './style.css';
+
 // import dimentions for game objects
 import {
   ballSize,
