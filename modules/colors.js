@@ -8,11 +8,15 @@ const colorTheme = [
   { darkColor: '#5643fa', lightColor: '#2998ff' }, // blue
   { darkColor: '#ff7730', lightColor: '#ffb900' }, // orange
   { darkColor: '#bf2e34', lightColor: '#753682' }, // pink
+  { darkColor: '#007f7f', lightColor: '#00bfbf' }, // Teal-Cyan
+  //{ darkColor: '#ffcc00', lightColor: '#ffe680' }, // Yellow-Gold
 ];
 
 function setColorTheme(color) {
-  root.style.setProperty('--color-dark', colorTheme[color].darkColor);
-  root.style.setProperty('--color-light', colorTheme[color].lightColor);
+  if (color < colorTheme.length) {
+    root.style.setProperty('--color-dark', colorTheme[color].darkColor);
+    root.style.setProperty('--color-light', colorTheme[color].lightColor);
+  }
 }
 
 // change color theme of game when player achives breakpoints
