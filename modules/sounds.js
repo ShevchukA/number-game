@@ -1,9 +1,10 @@
-import { soundBtnOn, soundBtnOff } from './dom.js';
+import { soundBtnOff, soundBtnOn } from './dom.js';
+
+import addBalls from '../sounds/add-balls.wav';
+import gameOver from '../sounds/game-over.wav';
+import gameStart from '../sounds/game-start.wav';
 import merge from '../sounds/merge.wav';
 import mergeBig from '../sounds/merge-big.wav';
-import gameStart from '../sounds/game-start.wav';
-import gameOver from '../sounds/game-over.wav';
-import addBalls from '../sounds/add-balls.wav';
 
 const sounds = {
   merge: {
@@ -30,7 +31,7 @@ const audioContext = new AudioContext();
 
 async function loadSounds() {
   //get array of promises, each async arrow function returns a promise
-  const loadSoundsPromises = Object.keys(sounds).map(async soundKey => {
+  const loadSoundsPromises = Object.keys(sounds).map(async (soundKey) => {
     // get sound object by key
     const sound = sounds[soundKey];
     //load sound from server
@@ -48,7 +49,7 @@ async function loadSounds() {
 
 function playSound(soundName) {
   if (soundsOn) {
-    // if audioContext unavaliable than resume
+    // if audioContext unavailable than resume
     if (audioContext.state === 'suspended') {
       audioContext.resume();
     }

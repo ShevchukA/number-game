@@ -1,4 +1,4 @@
-import { ballSize, getLeftFromCol, getTopFromRow } from './dimentions.js';
+import { ballSize, getLeftFromCol, getTopFromRow } from './dimensions.js';
 
 import { board } from './dom.js';
 

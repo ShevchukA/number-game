@@ -1,50 +1,52 @@
 // import DOM objects
-import {
-  startScreen,
-  mainScreen,
-  gameOverScreen,
-  scoreField,
-  highScoreField,
-  startHighScore,
-  board,
-  startBtn,
-  restartBtn,
-  gameOverMessage,
-  ui,
-} from './modules/dom.js';
-
-import { playSound, loadSounds, sounds } from './modules/sounds.js';
 
 import './style.css';
 
-// import dimentions for game objects
 import {
   ballSize,
-  cell,
-  gap,
-  colN,
-  rowN,
-  boardX,
-  boardY,
   boardH,
   boardW,
-  setBoardSizes,
+  boardX,
+  boardY,
+  cell,
+  colN,
+  gap,
   getLeftFromCol,
   getTopFromRow,
-} from './modules/dimentions.js';
-
-// import color control functions
+  rowN,
+  setBoardSizes,
+} from './modules/dimensions.js';
+import {
+  board,
+  gameOverMessage,
+  gameOverScreen,
+  highScoreField,
+  mainScreen,
+  restartBtn,
+  scoreField,
+  startBtn,
+  startHighScore,
+  startScreen,
+  ui,
+} from './modules/dom.js';
 import {
   changeColorTheme,
+  gameBreakpoints,
   refreshColors,
-  gameBrekpoints,
 } from './modules/colors.js';
+import { delta, setDelta } from './modules/animation.js';
+import { loadSounds, playSound, sounds } from './modules/sounds.js';
 
-// import ball constructor
 import Ball from './modules/ball.js';
 
+// import dimensions for game objects
+
+// import color control functions
+
+// import ball constructor
+
 // import delta value for smooth animation independent from fps
-import { delta, setDelta } from './modules/animation.js';
+
 // let delta = 1; //for debagging
 
 // call setDelta every requestAnimationFrame
@@ -116,7 +118,7 @@ function addNewBalls() {
 }
 
 async function liftBalls() {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     let ballsMoving = 0;
     for (let col = 0; col < colN; col++) {
       for (let row = 0; row < grid[col].length; row++) {
@@ -170,7 +172,7 @@ function moveBall(ball, col, row, onAnimationFinished) {
 
     // move ball on delta distance
     ball.setLeftTop(deltaLeft, deltaTop);
-    // repeat untill ball will get the target
+    // repeat until ball will get the target
     repeat();
   } else {
     canGrabBall = true;
@@ -193,7 +195,7 @@ function updateHighscore() {
 
 // Prevent browser default drag'n'drop behaviour
 // board.ondragstart = function () {}
-board.addEventListener('dragstart', e => e.preventDefault());
+board.addEventListener('dragstart', (e) => e.preventDefault());
 
 //board.onpointerdown = function (e) {}
 board.addEventListener('pointerdown', onPointerDown);
@@ -296,7 +298,7 @@ function dropBall(ball, e) {
             await liftBalls();
             // check fo matches in all columns
             let matches = [];
-            grid.forEach(col => matches.push(checkMatch(col)));
+            grid.forEach((col) => matches.push(checkMatch(col)));
             //if there are no matches after adding new row than can play next
             if (!matches.includes(true)) canGrabBall = true;
             checkCanPlay();
@@ -341,7 +343,7 @@ function mergeBalls(col, achievedPoints) {
   let ball = col.pop();
   //move ball down to merge with next ball
   moveBall(ball, ball.col, ball.row - 1, () => {
-    if (achievedPoints === gameBrekpoints[0]) {
+    if (achievedPoints === gameBreakpoints[0]) {
       playSound(sounds.mergeBig);
     } else {
       playSound(sounds.merge);
@@ -351,7 +353,9 @@ function mergeBalls(col, achievedPoints) {
     ball.html.classList.add('ball-merged');
     // remove merged balls from DOM
     setTimeout(() => {
-      document.querySelectorAll('.ball-merged').forEach(ball => ball.remove());
+      document
+        .querySelectorAll('.ball-merged')
+        .forEach((ball) => ball.remove());
     }, 300);
     // change color theme if necessary
     changeColorTheme(achievedPoints);
@@ -370,11 +374,11 @@ function addAim(col, row) {
   board.appendChild(aim);
 }
 
-function showAims(exept) {
+function showAims(except) {
   // for each column show possible aim for user except current column
   for (let col = 0; col < grid.length; col++) {
     let row = grid[col].length;
-    if (col != exept && row < rowN) {
+    if (col != except && row < rowN) {
       addAim(col, row);
     }
   }
@@ -383,12 +387,12 @@ function showAims(exept) {
 function hideAims() {
   // remove all aims from the board
   const aims = document.querySelectorAll('.aim');
-  aims.forEach(aim => aim.remove());
+  aims.forEach((aim) => aim.remove());
 }
 
 function checkGameOver() {
   // if one of columns is full than gameover
-  if (grid.find(col => col.length === rowN)) {
+  if (grid.find((col) => col.length === rowN)) {
     gameOver();
     return true;
   } else {
@@ -398,7 +402,7 @@ function checkGameOver() {
 
 function checkCanPlay() {
   // if there are no columns with empty cells then game over
-  if (!grid.find(col => col.length < rowN)) gameOver();
+  if (!grid.find((col) => col.length < rowN)) gameOver();
 }
 
 function gameOver() {
