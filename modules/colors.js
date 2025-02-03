@@ -5,8 +5,8 @@ let gameBrekpoints = [128, 256, 512, 1024];
 
 const colorTheme = [
   { darkColor: '#28b485', lightColor: '#7ed56f' }, // green
-  { darkColor: '#5643fa', lightColor: '#2998ff' }, // blue
   { darkColor: '#ff7730', lightColor: '#ffb900' }, // orange
+  { darkColor: '#5643fa', lightColor: '#2998ff' }, // blue
   { darkColor: '#bf2e34', lightColor: '#753682' }, // pink
   { darkColor: '#007f7f', lightColor: '#00bfbf' }, // Teal-Cyan
   //{ darkColor: '#ffcc00', lightColor: '#ffe680' }, // Yellow-Gold
