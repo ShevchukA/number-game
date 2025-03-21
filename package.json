@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "repository": "git@github.com:ShevchukA/number-game.git",
-  "author": "Roman Chistiakov <lisovsky.r@gmail.com>",
+  "author": "Anton Shevchuk <ashevchuk.doc@gmail.com>",
   "license": "MIT",
   "scripts": {
     "dev": "webpack serve --mode development --port 3000",
@@ -15,7 +15,6 @@
     "html-inline-script-webpack-plugin": "^3.2.1",
     "html-webpack-plugin": "^5.5.3",
     "style-loader": "^4.0.0",
-    "url-loader": "^4.1.1",
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^4.15.1"

@@ -416,3 +416,7 @@ function gameOver() {
     start();
   };
 }
+
+// TODO
+// Voting
+// Donating

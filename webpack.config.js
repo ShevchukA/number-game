@@ -7,15 +7,8 @@ module.exports = (env, argv) => ({
   module: {
     rules: [
       {
-        test: /(\.wav|.woff2|.ttf)$/i,
-        use: [
-          {
-            loader: 'url-loader',
-            options: {
-              limit: true,
-            },
-          },
-        ],
+        test: /\.(ttf|woff2?|wav)$/i,
+        type: 'asset/inline',
       },
       {
         test: /(\.css)$/i,
@@ -24,12 +17,12 @@ module.exports = (env, argv) => ({
             loader: 'style-loader',
             options: {
               insert: 'head',
-              injectType: 'singletonStyleTag'
+              injectType: 'singletonStyleTag',
             },
           },
-          "css-loader",
-        ]
-      }
+          'css-loader',
+        ],
+      },
     ],
   },
   resolve: {
